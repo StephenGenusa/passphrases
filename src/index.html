@@ -31,6 +31,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     <link href="css/style.css" rel="stylesheet" type="text/css">
     <link href="css/themes.css" rel="stylesheet" type="text/css">
     <link href="fonts/Open_Sans/opensans.css" rel="stylesheet" type="text/css">
+    <link href="fonts/JetBrains_Mono/jetbrainsmono.css" rel="stylesheet" type="text/css">
 
     <script src="js/common.js"></script>
     <script src="js/tabs.js"></script>
@@ -42,27 +43,27 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
   <body>
     <div class="wrapper">
       <!-- navigation -->
-      <ul class="navigation">
-        <li class="tab tab-generate">Generate</li><li class="tab tab-lists">Word lists</li><li class="tab tab-memorize">Memorize</li><li class="tab tab-about">About</li>
-      </ul>
+      <div class="navigation" role="tablist" aria-label="Sections">
+        <button type="button" role="tab" id="tab-generate" aria-controls="panel-generate" class="tab tab-generate">Generate</button><button type="button" role="tab" id="tab-lists" aria-controls="panel-lists" class="tab tab-lists">Word lists</button><button type="button" role="tab" id="tab-memorize" aria-controls="panel-memorize" class="tab tab-memorize">Memorize</button><button type="button" role="tab" id="tab-about" aria-controls="panel-about" class="tab tab-about">About</button>
+      </div>
 
       <!-- content -->
       <div class="content-wrapper">
 
         <!-- generate -->
-        <div class="content content-generate">
+        <div class="content content-generate" role="tabpanel" id="panel-generate" aria-labelledby="tab-generate">
           <div class="generate-top">
             <div class="generate-options">
               <button type="button" class="wordlists-summary"></button>
               <div class="option-row">
-                <select class="words"></select>
+                <select class="words" aria-label="Number of words"></select>
                 <label title="The longest passphrase to generate, in characters">Max length <input type="number" class="max-length" min="8" max="999" step="1" value="96"></label>
               </div>
               <label><input type="checkbox" id="use-capitals" checked> Capital letters</label>
               <label><input type="checkbox" id="use-numbers" checked> Numbers</label>
               <div class="option-row">
                 <label><input type="checkbox" id="use-symbols" checked> Symbols</label>
-                <input type="text" class="symbols" value="!@#$%^&amp;*-_+=" title="The symbols to use. Edit this to match what the site accepts." autocomplete="off" spellcheck="false">
+                <input type="text" class="symbols" aria-label="Symbols to use" value="!@#$%^&amp;*-_+=" title="The symbols to use. Edit this to match what the site accepts." autocomplete="off" spellcheck="false">
               </div>
               <label title="Put a space between words. Available when numbers and symbols are both off."><input type="checkbox" id="use-spaces"> Spaces between words</label>
               <label title="Leave out words with accented or non-Latin letters, which many sites do not accept"><input type="checkbox" id="ascii-only" checked> ASCII words only</label>
@@ -71,20 +72,25 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
           </div>
 
           <div class="passphrase-wrapper">
-            <div class="passphrase"></div>
+            <div class="passphrase" aria-label="Passphrase"></div>
           </div>
-          <div class="passphrase-length"></div>
+          <div class="passphrase-status">
+            <div class="copy-status" role="status"></div>
+            <div class="passphrase-length"></div>
+          </div>
 
           <div class="buttons">
-            <div class="btn button-generate">Generate</div>
-            <div class="btn button-memorize">Memorize</div>
+            <button type="button" class="btn button-generate">Generate</button>
+            <button type="button" class="btn button-copy" title="Copy the passphrase. It is kept out of clipboard history and cleared from the clipboard after a short time.">Copy</button>
+            <button type="button" class="btn button-hide" aria-pressed="false" title="Hide or show the passphrase on screen">Hide</button>
+            <button type="button" class="btn button-memorize">Memorize</button>
           </div>
         </div>
 
         <!-- word lists -->
-        <div class="content content-lists">
+        <div class="content content-lists" role="tabpanel" id="panel-lists" aria-labelledby="tab-lists">
           <div class="lists-toolbar">
-            <input type="search" class="lists-filter" placeholder="Type to find a word list or language" autocomplete="off" spellcheck="false">
+            <input type="search" class="lists-filter" aria-label="Find a word list" placeholder="Type to find a word list or language" autocomplete="off" spellcheck="false">
             <span class="lists-count"></span>
           </div>
           <div class="lists-box"></div>
@@ -92,17 +98,17 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         </div>
 
         <!-- memorize -->
-        <div class="content content-memorize">
+        <div class="content content-memorize" role="tabpanel" id="panel-memorize" aria-labelledby="tab-memorize">
           <div class="memorize-input">
             <p>Type in passphrase to start memorizing:</p>
             <p>
               <form class="memorize-input-form">
-                <input type="text" class="passphrase-to-memorize" />
+                <input type="text" class="passphrase-to-memorize" aria-label="Passphrase to memorize" autocomplete="off" />
               </form>
             </p>
             <div class="buttons">
-              <div class="btn button-copy-passphrase">Copy Current Passphrase</div>
-              <div class="btn button-start-memorizing">Start Memorizing</div>
+              <button type="button" class="btn button-copy-passphrase">Copy Current Passphrase</button>
+              <button type="button" class="btn button-start-memorizing">Start Memorizing</button>
             </div>
           </div>
 
@@ -119,7 +125,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
               </div>
 
               <p>
-                <input type="text" class="passphrase-test" />
+                <input type="text" class="passphrase-test" aria-label="Type the passphrase" autocomplete="off" />
               </p>
             </div>
 
@@ -129,7 +135,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
               <div class="countdown"></div>
 
               <div class="button">
-                <div class="btn button-skip-countdown">Skip Countdown</div>
+                <button type="button" class="btn button-skip-countdown">Skip Countdown</button>
               </div>
             </div>
 
@@ -138,7 +144,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             </div>
 
             <div class="buttons cancel-wrapper">
-              <div class="btn button-cancel">Cancel</div>
+              <button type="button" class="btn button-cancel">Cancel</button>
             </div>
 
             <p class="memorize-warning">If you haven't memorized your passphrase, <strong>don't close this window</strong> without writing it down first. This program won't save it for you.</p>
@@ -146,7 +152,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         </div>
 
         <!-- about -->
-        <div class="content content-about">
+        <div class="content content-about" role="tabpanel" id="panel-about" aria-labelledby="tab-about">
           <p><strong>Passphrases</strong> is a tool that helps you generate <a href="https://theintercept.com/2015/03/26/passphrases-can-memorize-attackers-cant-guess/">high-entropy passphrases</a> and memorize them using a technique called spaced repetition.</p>
 
           <form class="about-settings">

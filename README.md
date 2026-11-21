@@ -32,7 +32,11 @@ A desktop tool that generates high-entropy passphrases and helps you memorize th
 - **Made for sites with password rules.** Capital letters, numbers and symbols are each a checkbox, and every kind that is on appears at least twice. The symbols come from a field you can edit to match what a site accepts; it starts with the commonly accepted ones.
 - **ASCII words only, by default.** Words with accented or non-Latin letters are left out unless you switch that off, because many sites mishandle them.
 - **Fourteen color styles.** They include low-contrast ones that draw the passphrase at about 3:1 contrast, readable at the keyboard and hard to read from across a room.
-- **Private.** Nothing is saved except the sound and color settings, and nothing is sent over the Internet.
+- **A copy button that cleans up after itself.** The passphrase is put on the clipboard with the markers password managers use, so Windows clipboard history, cloud clipboard sync and clipboard managers skip it. The app clears it from the clipboard after 30 seconds, unless you have copied something else by then. Closing the window does not cancel the clearing.
+- **Hide and show.** One button turns the passphrase into dots, and the choice is remembered.
+- **Hard to misread.** The passphrase is set in JetBrains Mono, which keeps l, I and 1 and O and 0 apart, and digits and symbols each have their own color. The font ships inside the app.
+- **Works from the keyboard.** Every button and tab can be reached with Tab and the arrow keys, and is labelled for screen readers.
+- **Private.** Nothing is saved except the sound, color and hide settings. The main process cancels every network request, so nothing is sent over the Internet.
 
 ## Download
 
@@ -54,6 +58,7 @@ The app ships with **zero npm packages**. Everything on the page is plain HTML, 
 
 - **jQuery was removed.** The original app used jQuery 2.1. It was replaced by the browser's own DOM calls and two small helper functions in `src/js/common.js`: `el()` finds an element and `setVisible()` shows or hides it. No library took its place.
 - **random-js was removed.** Its default engine was `Math.random`, which is not suitable for secrets. A short function over `crypto.getRandomValues` replaced it.
+- **Two fonts are bundled as files.** Open Sans for the interface and JetBrains Mono Bold for the passphrase, both under open licences kept beside them in `src/fonts`. They are loaded from disk, never from the network.
 - **Electron is the only development dependency.** It brings 12 small packages used to download and unpack it; none of them is in the packaged app. `package-lock.json` pins every version.
 - **No build framework.** `build.js` packages the app with Node and each platform's own tools. In CI, two extra tools are downloaded (appimagetool and rcedit), each pinned to a version and checked against a SHA-256 checksum, and every GitHub Action is pinned to a commit.
 
@@ -61,7 +66,7 @@ The app ships with **zero npm packages**. Everything on the page is plain HTML, 
 
 ### Architecture
 
-The page runs in Chromium's sandbox with no access to Node or the file system. It reaches the rest of the system only through five calls that the preload script exposes.
+The page runs in Chromium's sandbox with no access to Node or the file system. It reaches the rest of the system only through seven calls that the preload script exposes.
 
 ```mermaid
 flowchart LR
@@ -69,18 +74,19 @@ flowchart LR
         UI["index.html<br/>generate, memorize, tabs, about"]
     end
     subgraph Bridge["preload.js"]
-        API["window.passphrasesApp<br/>5 calls"]
+        API["window.passphrasesApp<br/>7 calls"]
     end
     subgraph Main["main.js (main process)"]
         IPC["IPC handlers"]
     end
     UI --> API --> IPC
     IPC --> WL[("wordlists/<br/>manifest.json + 261 lists")]
-    IPC --> PREFS[("passphrases.conf<br/>sound, color style")]
+    IPC --> PREFS[("passphrases.conf<br/>sound, color style, hide")]
+    IPC --> CLIP["clipboard<br/>marked sensitive, cleared after 30 s"]
     IPC --> BROWSER["system browser<br/>https links only"]
 ```
 
-A Content-Security-Policy allows only the app's own files, and the page asks for a word list by id; the file name always comes from the manifest in the main process.
+A Content-Security-Policy allows only the app's own files, the main process cancels any request that is not for one of those files, and the page asks for a word list by id; the file name always comes from the manifest in the main process.
 
 ### Generating a passphrase
 

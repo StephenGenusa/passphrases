@@ -1,0 +1,10 @@
+# Check text files out with LF line endings on every platform. The wordlists
+# are read one word per line, and the packaged app should be the same bytes
+# whichever system built it.
+* text=auto eol=lf
+
+*.png binary
+*.ico binary
+*.icns binary
+*.ogg binary
+*.woff2 binary

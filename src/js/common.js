@@ -70,7 +70,8 @@ Passphrases.notify = function(message) {
 // default preferences, replaced by the saved ones once they are read
 Passphrases.prefs = {
   sound: true,
-  theme: 'classic'
+  theme: 'classic',
+  hide: false
 };
 Passphrases.savePrefs = function() {
   return window.passphrasesApp.savePrefs(Passphrases.prefs);

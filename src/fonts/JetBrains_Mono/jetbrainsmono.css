@@ -1,0 +1,8 @@
+/* JetBrains Mono Bold 2.304, SIL Open Font License 1.1 (see LICENSE.txt).
+   Used for passphrases because it keeps l, I, 1 and O, 0 apart. */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 700;
+  src: url(bold.woff2) format('woff2');
+}

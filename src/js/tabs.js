@@ -26,7 +26,11 @@ document.addEventListener('DOMContentLoaded', function(){
 
   function showTab(name) {
     tabs.forEach(function(tab){
-      el('.tab-' + tab).classList.toggle('active', tab == name);
+      var button = el('.tab-' + tab);
+      button.classList.toggle('active', tab == name);
+      button.setAttribute('aria-selected', tab == name ? 'true' : 'false');
+      // one stop for the Tab key; the arrow keys move between tabs
+      button.tabIndex = tab == name ? 0 : -1;
       el('.content-' + tab).classList.toggle('active', tab == name);
     });
 
@@ -39,9 +43,18 @@ document.addEventListener('DOMContentLoaded', function(){
     }
   }
 
-  tabs.forEach(function(tab){
+  tabs.forEach(function(tab, index){
     el('.tab-' + tab).addEventListener('click', function(){
       if(!this.classList.contains('active')) showTab(tab);
+    });
+    el('.tab-' + tab).addEventListener('keydown', function(e){
+      var to = { ArrowRight: index + 1, ArrowLeft: index - 1, Home: 0, End: tabs.length - 1 }[e.key];
+      if(to === undefined) return;
+      e.preventDefault();
+      var next = tabs[(to + tabs.length) % tabs.length];
+      showTab(next);
+      // showing Memorize moves the focus into its text field; put it back
+      el('.tab-' + next).focus();
     });
   });
 

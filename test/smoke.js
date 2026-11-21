@@ -5,7 +5,7 @@
 // every check passes. Set SMOKE_SCREENSHOT to a .png path to save a picture of
 // the window in every color style.
 
-const { app, shell } = require('electron');
+const { app, clipboard, session, shell } = require('electron');
 const assert = require('assert');
 const fs = require('fs');
 const os = require('os');
@@ -15,6 +15,8 @@ const path = require('path');
 const SRC = process.env.PASSPHRASES_APP || path.join(__dirname, '..', 'src');
 const userData = fs.mkdtempSync(path.join(os.tmpdir(), 'passphrases-test-'));
 app.setPath('userData', userData);
+// clear a copied passphrase after 2 seconds instead of 30
+process.env.PASSPHRASES_CLIPBOARD_SECONDS = '2';
 
 // record links instead of opening the browser
 const opened = [];
@@ -29,7 +31,8 @@ function words(id) {
   const manifest = JSON.parse(
     fs.readFileSync(path.join(SRC, 'wordlists', 'manifest.json'), 'utf8'));
   const entry = manifest.lists.find((list) => list.id === id);
-  const lines = fs.readFileSync(path.join(SRC, 'wordlists', entry.file), 'utf8').split('\n');
+  // \r?\n: a Windows checkout may have converted the line endings
+  const lines = fs.readFileSync(path.join(SRC, 'wordlists', entry.file), 'utf8').split(/\r?\n/);
   lines.pop();
   return { entry: entry, set: new Set(lines), count: manifest.lists.length };
 }
@@ -39,7 +42,10 @@ function sleep(ms) {
 }
 
 async function run(win) {
-  const page = (code) => win.webContents.executeJavaScript(code, true);
+  // run code in the page; a failure names the code that failed
+  const page = (code) => win.webContents.executeJavaScript(code, true).catch((err) => {
+    throw new Error('In the page: ' + code + '\n' + (err && err.message));
+  });
   const q = (selector) => 'document.querySelector(' + JSON.stringify(selector) + ')';
   const text = (selector) => page(q(selector) + '.textContent');
   const value = (selector) => page(q(selector) + '.value');
@@ -65,7 +71,7 @@ async function run(win) {
   assert.strictEqual(await page('typeof jQuery'), 'undefined', 'page has no jQuery');
   assert.deepStrictEqual(
     await page('Object.keys(window.passphrasesApp).sort()'),
-    ['focusWindow', 'getWordlists', 'loadPrefs', 'readWordlist', 'savePrefs']);
+    ['copySensitive', 'focusWindow', 'getWordlists', 'loadPrefs', 'onClipboardCleared', 'readWordlist', 'savePrefs']);
 
   // ---- helpers that work out, independently of the app, what it should show
   const length = (s) => Array.from(s).length;
@@ -412,7 +418,7 @@ async function run(win) {
   const prefsFile = path.join(userData, 'passphrases.conf');
   const readPrefs = () => JSON.parse(fs.readFileSync(prefsFile, 'utf8'));
   for (let i = 0; i < 100 && !fs.existsSync(prefsFile); i++) await sleep(50);
-  assert.deepStrictEqual(readPrefs(), { sound: false, theme: 'classic' });
+  assert.deepStrictEqual(readPrefs(), { sound: false, theme: 'classic', hide: false });
 
   // every color style applies, and the choice is saved
   const styles = await page('Array.from(' + q('.color-style') + '.options).map(function(o){ return o.value; })');
@@ -432,8 +438,106 @@ async function run(win) {
   }
   assert.strictEqual(seen.size, styles.length, 'each style has its own passphrase colors');
   for (let i = 0; i < 100 && readPrefs().theme !== 'zenburn-low'; i++) await sleep(50);
-  assert.deepStrictEqual(readPrefs(), { sound: false, theme: 'zenburn-low' });
+  assert.deepStrictEqual(readPrefs(), { sound: false, theme: 'zenburn-low', hide: false });
   await set('.color-style', 'classic', 'change');
+
+  // ---- the passphrase on screen
+  await click('.tab-generate');
+  for (const box of ['#use-numbers', '#use-symbols']) {
+    if (!(await page(q(box) + '.checked'))) await click(box);
+  }
+  await click('.button-generate');
+  const shown = await text('.passphrase');
+  assert(shown.length > 0);
+  // a font that keeps l, I, 1 and O, 0 apart, loaded from the app itself
+  assert((await page('getComputedStyle(' + q('.passphrase') + ').fontFamily')).includes('JetBrains Mono'));
+  await page('document.fonts.load("bold 21px \'JetBrains Mono\'").then(function(){ return null; })');
+  assert.strictEqual(await page('document.fonts.check("bold 21px \'JetBrains Mono\'")'), true, 'the passphrase font loaded');
+  // digits and symbols have their own colors
+  const colored = (kind) => page('Array.from(document.querySelectorAll(".passphrase .' + kind + '")).map(function(e){ return e.textContent; }).join("")');
+  assert.strictEqual(await colored('digit'), shown.replace(/[^0-9]/g, ''), 'every digit is marked');
+  assert.strictEqual(await colored('symbol'), shown.replace(/[A-Za-z0-9]/g, ''), 'every symbol is marked');
+  const colorOf = (selector) => page('getComputedStyle(' + q(selector) + ').color');
+  const colors = new Set([await colorOf('.passphrase .letter'), await colorOf('.passphrase .digit'), await colorOf('.passphrase .symbol')]);
+  assert.strictEqual(colors.size, 3, 'letters, digits and symbols differ in color');
+
+  // ---- hide and show
+  const security = () => page('getComputedStyle(' + q('.passphrase') + ').webkitTextSecurity');
+  assert.strictEqual(await security(), 'none');
+  await click('.button-hide');
+  assert.strictEqual(await security(), 'disc', 'the passphrase is drawn as dots');
+  assert.strictEqual(await text('.button-hide'), 'Show');
+  assert.strictEqual(await colorOf('.passphrase .digit'), await colorOf('.passphrase .letter'), 'hidden dots are one color');
+  assert.strictEqual(await text('.passphrase'), shown, 'hiding keeps the passphrase');
+  for (let i = 0; i < 100 && !readPrefs().hide; i++) await sleep(50);
+  assert.strictEqual(readPrefs().hide, true, 'the choice is saved');
+  await click('.button-generate');
+  assert.strictEqual(await security(), 'disc', 'a new passphrase stays hidden');
+  await click('.button-hide');
+  assert.strictEqual(await security(), 'none');
+  assert.strictEqual(await text('.button-hide'), 'Hide');
+  for (let i = 0; i < 100 && readPrefs().hide; i++) await sleep(50);
+  assert.strictEqual(readPrefs().hide, false);
+
+  // ---- copy: marked as sensitive, then cleared
+  const marker = 'electron application/osclipboard;format="' + {
+    win32: 'ExcludeClipboardContentFromMonitorProcessing',
+    darwin: 'org.nspasteboard.ConcealedType'
+  }[process.platform] + '"';
+  const markers = process.platform == 'win32' ? [marker,
+    'electron application/osclipboard;format="CanIncludeInClipboardHistory"',
+    'electron application/osclipboard;format="CanUploadToCloudClipboard"'] :
+    process.platform == 'darwin' ? [marker] :
+      ['electron application/osclipboard;format="x-kde-passwordManagerHint"'];
+  const current = await text('.passphrase');
+  await click('.button-copy');
+  await waitForText('.copy-status', 'Copied. The clipboard will be cleared in ', 'the copy message');
+  assert.strictEqual(await clipboard.readText(), current, 'the passphrase is on the clipboard');
+  for (const format of markers) {
+    assert.strictEqual(await clipboard.has(format), true, 'marked as sensitive with ' + format);
+  }
+  await waitForText('.copy-status', 'Clipboard cleared', 'the clipboard to be cleared');
+  assert.strictEqual(await clipboard.readText(), '', 'the clipboard is empty again');
+  // something else copied in the meantime is left alone
+  await click('.button-copy');
+  await waitForText('.copy-status', 'Copied.', 'the second copy message');
+  await clipboard.writeText('something else');
+  await waitFor(q('.copy-status') + '.textContent == ""', 'the copy message to go');
+  assert.strictEqual(await clipboard.readText(), 'something else', 'other clipboard content is kept');
+  clipboard.clear();
+
+  // ---- keyboard: every control is a real button, and the arrow keys move
+  // between the tabs
+  assert.deepStrictEqual(
+    await page('Array.from(document.querySelectorAll(".btn, .tab")).filter(function(e){ return e.tagName != "BUTTON"; }).length'), 0);
+  assert.strictEqual(await page('document.querySelectorAll(".btn").length'), 8);
+  const key = (selector, name) => page(q(selector) + '.dispatchEvent(new KeyboardEvent("keydown", { key: ' + JSON.stringify(name) + ', bubbles: true, cancelable: true })); null');
+  const focused = () => page('document.activeElement.className');
+  await key('.tab-generate', 'ArrowRight');
+  assert.strictEqual(await visible('.content-lists'), true, 'right arrow shows the next tab');
+  assert(( await focused()).includes('tab-lists'));
+  assert.strictEqual(await page(q('.tab-lists') + '.getAttribute("aria-selected")'), 'true');
+  assert.strictEqual(await page(q('.tab-generate') + '.tabIndex'), -1);
+  await key('.tab-lists', 'ArrowLeft');
+  await key('.tab-generate', 'ArrowLeft');
+  assert.strictEqual(await visible('.content-about'), true, 'left arrow wraps around to the last tab');
+  assert((await focused()).includes('tab-about'));
+  await key('.tab-about', 'Home');
+  assert.strictEqual(await visible('.content-generate'), true);
+  await click('.tab-about');
+
+  // ---- nothing leaves the machine: requests are cancelled, whoever makes them
+  const blocked = async (target) => {
+    try {
+      await session.defaultSession.fetch(target);
+    } catch (e) {
+      return String(e.message);
+    }
+    return 'answered';
+  };
+  for (const target of ['https://example.invalid/', 'http://127.0.0.1:9/', 'file://' + (process.platform == 'win32' ? '/' : '') + __filename.replace(/\\/g, '/')]) {
+    assert((await blocked(target)).includes('ERR_BLOCKED_BY_CLIENT'), target + ' is blocked: ' + await blocked(target));
+  }
 
   // links open in the browser and the window stays on the app
   const url = win.webContents.getURL();

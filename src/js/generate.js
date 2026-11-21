@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', function(){
     if(list.wordlist) return Promise.resolve(list);
 
     return window.passphrasesApp.readWordlist(id).then(function(data){
-      list.wordlist = data.split('\n');
+      list.wordlist = data.split(/\r?\n/);
       // remove the trailing blank item
       if(list.wordlist[list.wordlist.length - 1] == '') list.wordlist.pop();
       return list;
@@ -408,7 +408,7 @@ document.addEventListener('DOMContentLoaded', function(){
     var fits = budget >= 0 && pool.count > 0 ? countFits(selectedWords, budget) : null;
     if(!fits || fits[selectedWords][budget] == 0n) {
       Passphrases.currentPassphrase = '';
-      el('.passphrase').textContent = '';
+      showPassphrase('');
       el('.passphrase-length').textContent = '';
       return;
     }
@@ -456,9 +456,88 @@ document.addEventListener('DOMContentLoaded', function(){
     passphrase += separators.slice(words.length - 1).join('');
 
     Passphrases.currentPassphrase = passphrase;
-    el('.passphrase').textContent = passphrase;
+    showPassphrase(passphrase);
     el('.passphrase-length').textContent = wordLength(passphrase) + ' characters';
   }
+
+  // Show the passphrase with its digits and symbols in their own colors, so
+  // that a 1 is not read as an l or a 0 as an O.
+  function showPassphrase(passphrase) {
+    var box = el('.passphrase');
+    box.textContent = '';
+    var run = null;
+    Array.from(passphrase).forEach(function(ch){
+      var kind = /[\p{L}\p{M}\s]/u.test(ch) ? 'letter' : /\p{Nd}/u.test(ch) ? 'digit' : 'symbol';
+      if(!run || run.className != kind) {
+        run = document.createElement('span');
+        run.className = kind;
+        box.appendChild(run);
+      }
+      run.textContent += ch;
+    });
+  }
+
+  // ------------------------------------------------------ copy and hide
+
+  var copyStatus = el('.copy-status'),
+    copyCountdown = null;
+
+  function setCopyStatus(message) {
+    clearInterval(copyCountdown);
+    copyCountdown = null;
+    copyStatus.textContent = message;
+  }
+
+  // Copy through the main process, which marks the text as sensitive so that
+  // clipboard history and sync skip it, and clears it after a short time.
+  function copySensitive(text) {
+    if(!text) return;
+    window.passphrasesApp.copySensitive(text).then(function(result){
+      var left = result.seconds;
+      var show = function(){
+        copyStatus.textContent = 'Copied. The clipboard will be cleared in ' + left +
+          (left == 1 ? ' second' : ' seconds');
+      };
+      setCopyStatus('');
+      show();
+      copyCountdown = setInterval(function(){
+        if(left > 1) { left--; show(); }
+      }, 1000);
+    }, function(){
+      setCopyStatus('Could not copy');
+    });
+  }
+  window.passphrasesApp.onClipboardCleared(function(cleared){
+    setCopyStatus(cleared ? 'Clipboard cleared' : '');
+  });
+
+  el('.button-copy').addEventListener('click', function(){
+    copySensitive(Passphrases.currentPassphrase);
+  });
+  // Ctrl-C on a selected part of a passphrase gets the same treatment
+  document.addEventListener('copy', function(e){
+    var selection = window.getSelection(),
+      node = selection.anchorNode,
+      from = node && (node.nodeType == 1 ? node : node.parentElement);
+    if(selection.isCollapsed || !from || !from.closest('.passphrase, .hint-show')) return;
+    e.preventDefault();
+    copySensitive(selection.toString());
+  });
+
+  var hideButton = el('.button-hide');
+  function setHidden(hide) {
+    el('.passphrase').classList.toggle('concealed', hide);
+    hideButton.textContent = hide ? 'Show' : 'Hide';
+    hideButton.setAttribute('aria-pressed', hide ? 'true' : 'false');
+  }
+  hideButton.addEventListener('click', function(){
+    Passphrases.prefs['hide'] = !Passphrases.prefs['hide'];
+    setHidden(Passphrases.prefs['hide']);
+    Passphrases.savePrefs();
+  });
+  Passphrases.ready.then(function(){
+    setHidden(!!Passphrases.prefs['hide']);
+  });
 
   wordsSelect.addEventListener('change', update);
   maxLengthBox.addEventListener('input', update);

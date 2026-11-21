@@ -73,7 +73,9 @@ select {
 }
 .navigation .tab {
   display: inline-block;
-  list-style: none;
+  border: 0;
+  background: none;
+  font-family: inherit;
   padding: 10px 20px;
   margin: 0;
   text-decoration: none;
@@ -254,7 +256,8 @@ select {
 }
 .passphrase {
   text-align: center;
-  font-size: 23px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 21px;
   font-weight: bold;
   color: var(--secret);
   max-height: 100%;
@@ -262,12 +265,35 @@ select {
   max-width: 100%;
 }
 
-.passphrase-length {
+/* Digits and symbols lean toward blue and orange, at the contrast the color
+   style chose for the passphrase. */
+.passphrase .digit {
+  color: color-mix(in oklab, var(--secret) 35%, #1e88ff);
+}
+.passphrase .symbol {
+  color: color-mix(in oklab, var(--secret) 35%, #e8590c);
+}
+/* hidden: dots in one color, so they give away nothing but the length */
+.passphrase.concealed {
+  -webkit-text-security: disc;
+}
+.passphrase.concealed span {
+  color: inherit;
+}
+
+.passphrase-status {
+  display: flex;
+  justify-content: space-between;
   min-height: 18px;
   margin-bottom: 6px;
-  text-align: right;
   font-size: 12px;
   color: var(--muted);
+}
+
+/* show where the keyboard is */
+:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
 }
 
 .memorize-input {
@@ -288,8 +314,8 @@ select {
 }
 
 .passphrase-to-memorize, .passphrase-test {
-  font-size: 20px;
-  font-family: 'Open Sans', sans-serif;
+  font-size: 18px;
+  font-family: 'JetBrains Mono', monospace;
   font-weight: bold;
   padding: 15px;
   width: 560px;
@@ -318,6 +344,7 @@ select {
   background-color: var(--progress);
 }
 .hint-show {
+  font-family: 'JetBrains Mono', monospace;
   font-weight: bold;
   font-size: 15px;
   color: var(--secret);
@@ -364,6 +391,8 @@ select {
 }
 .btn {
   display: inline-block;
+  border: 0;
+  font-family: inherit;
   cursor: pointer;
   margin: 5px 10px;
   background: var(--button-top);
