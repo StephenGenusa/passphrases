@@ -135,31 +135,40 @@ MIN_LEN_CJK = 2
 MAX_LEN = 30
 SHORT_BELOW = 8
 
-# Lists that do not come from Wiktionary: (id, name, description, licence).
+# Lists that do not come from Wiktionary:
+# (id, name, description, licence, language).
 OTHER_LISTS = [
+    ('eff-large', 'EFF Large',
+     'EFF long wordlist of memorable English words', 'CC BY 4.0', 'English'),
+    ('eff-short-1', 'EFF Short',
+     'EFF short wordlist 1: short, common English words', 'CC BY 4.0', 'English'),
+    ('eff-short-2', 'EFF Short, Distinct',
+     'EFF short wordlist 2: English words that differ in their first three '
+     'letters', 'CC BY 4.0', 'English'),
     ('securedrop', 'SecureDrop',
-     'English wordlist from the SecureDrop project', ''),
+     'English wordlist from the SecureDrop project', '', 'English'),
     ('english-diceware', 'English Diceware',
-     'Original English Diceware wordlist', ''),
+     'Original English Diceware wordlist', '', 'English'),
     ('eowl', 'English Open Word List',
-     'The English Open Word List. Copyright © J Ross Beresford 1993-1999. '
-     'All Rights Reserved.', 'See eowl_license.txt'),
+     'The English Open Word List. Copyright \u00a9 J Ross Beresford 1993-1999. '
+     'All Rights Reserved.', 'See eowl_license.txt', 'English'),
     ('catalan-diceware', 'Catalan Diceware',
-     'Diccionari català per Marcel Hernandez', 'CC BY 4.0'),
+     'Diccionari catal\u00e0 per Marcel Hernandez', 'CC BY 4.0', 'Catalan'),
     ('german-diceware', 'Deutsch Diceware',
-     'Deutsch Wörterbuch, von Benjamin Tenne', 'GPL'),
-    ('french-diceware', 'Français Diceware',
-     'Dictionnaire français par Matthieu Weber', ''),
+     'Deutsch W\u00f6rterbuch, von Benjamin Tenne', 'GPL', 'German'),
+    ('french-diceware', 'Fran\u00e7ais Diceware',
+     'Dictionnaire fran\u00e7ais par Matthieu Weber', '', 'French'),
     ('italian-diceware', 'Italiano Diceware',
-     'Lista di parole Diceware in Italiano by Tarin Gamberini', 'GPL'),
+     'Lista di parole Diceware in Italiano by Tarin Gamberini', 'GPL',
+     'Italian'),
     ('japanese-diceware', 'Japanese Diceware',
-     'Japanese Diceware by Hiroshi Yuki & J Greely', 'CC BY-SA'),
+     'Japanese Diceware by Hiroshi Yuki & J Greely', 'CC BY-SA', 'Japanese'),
     ('dutch-diceware', 'Dutch Diceware',
-     'Nederlands woordenboek door Bart Van den Eynde', 'GPL'),
+     'Nederlands woordenboek door Bart Van den Eynde', 'GPL', 'Dutch'),
     ('polish-diceware', 'Polski Diceware',
-     'Polski Słownik przez Piotr (DrFugazi) Tarnowski', ''),
+     'Polski S\u0142ownik przez Piotr (DrFugazi) Tarnowski', '', 'Polish'),
     ('swedish-diceware', 'Svensk Diceware',
-     'Svensk ordbok av Magnus Bodin', ''),
+     'Svensk ordbok av Magnus Bodin', '', 'Swedish'),
 ]
 
 
@@ -256,7 +265,7 @@ def cmd_build(args):
     removed_log = []
 
     # Lists that do not come from Wiktionary: tidy them in place.
-    for list_id, name, description, licence in OTHER_LISTS:
+    for list_id, name, description, licence, language in OTHER_LISTS:
         path = os.path.join(WORDLISTS, list_id + '.wordlist')
         with open(path, 'rb') as f:
             raw_words = [decode_line(b) for b in f.read().split(b'\n')]
@@ -275,7 +284,7 @@ def cmd_build(args):
         lists.append({
             'id': list_id, 'file': list_id + '.wordlist', 'name': name,
             'description': description, 'count': len(words),
-            'license': licence, 'source': 'bundled',
+            'license': licence, 'language': language, 'source': 'bundled',
         })
 
     # Wiktionary lists.
@@ -311,7 +320,7 @@ def cmd_build(args):
                 'name': name % lang,
                 'description': '%s words from Wiktionary' % lang,
                 'count': len(variant_words), 'license': 'CC BY-SA',
-                'source': 'wiktionary',
+                'language': lang, 'source': 'wiktionary',
             })
 
     # Remove Wiktionary lists from earlier builds, then write the new ones.

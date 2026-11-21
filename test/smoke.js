@@ -67,52 +67,17 @@ async function run(win) {
     await page('Object.keys(window.passphrasesApp).sort()'),
     ['focusWindow', 'getWordlists', 'loadPrefs', 'readWordlist', 'savePrefs']);
 
-  // defaults: English Wiktionary, seven words, digits or punctuation between
-  // them, some words capitalized
-  await waitFor(q('.passphrase') + '.textContent != ""', 'the first passphrase');
-  const english = words('english-wiktionary');
-  assert.strictEqual(await page('document.querySelectorAll("#wordlists-options option").length'),
-    english.count, 'one suggestion per manifest entry');
-  assert.strictEqual(await value('input.wordlists'), 'English Wiktionary');
-  assert.strictEqual(await page(q('select.separator') + '.selectedOptions[0].textContent'),
-    'numbers + punctuation');
-  assert.strictEqual(await page(q('#use-upcase') + '.checked'), true);
-  let passphrase = await text('.passphrase');
-  // the wordlists hold letters only, so anything else is a separator
-  let parts = passphrase.split(/[^\p{L}\p{M}]/u);
-  assert.strictEqual(parts.length, 7, 'seven words by default: ' + passphrase);
-  parts.forEach((w) => assert(
-    english.set.has(w) || english.set.has(w.charAt(0).toLowerCase() + w.substring(1)),
-    w + ' is in the English Wiktionary list'));
-  let sawUppercase = false;
-  let sawDigit = false;
-  let sawPunctuation = false;
-  for (let i = 0; i < 40 && !(sawUppercase && sawDigit && sawPunctuation); i++) {
-    await click('.button-generate');
-    const sample = await text('.passphrase');
-    sawUppercase = sawUppercase || /\p{Lu}/u.test(sample);
-    sawDigit = sawDigit || /\d/.test(sample);
-    sawPunctuation = sawPunctuation || /[^\p{L}\p{M}\d]/u.test(sample);
-  }
-  assert(sawUppercase, 'capitalized words appear');
-  assert(sawDigit && sawPunctuation, 'digits and punctuation both appear as separators');
-  let description = await text('.wordlist-description');
-  const bits = Math.round(Math.log2(english.entry.count) * 7 * 100) / 100;
-  assert(description.includes(english.entry.count + ' words, '), description);
-
-  // maximum length: a number field with a spinner, 96 by default
-  assert.strictEqual(await page(q('input.max-length') + '.type'), 'number');
-  assert.strictEqual(await value('input.max-length'), '96');
+  // ---- helpers that work out, independently of the app, what it should show
   const length = (s) => Array.from(s).length;
-  assert(length(passphrase) <= 96, 'the default passphrase fits in 96 characters');
-  // the length of the passphrase on show is stated under it
-  assert.strictEqual(await text('.passphrase-length'),
-    length(await text('.passphrase')) + ' characters');
-  const bitsWithin = (list, count, limit) => {
-    // number of ways to pick `count` words whose letters total at most
-    // limit - (count - 1), worked out here independently of the app
+  const isAscii = (w) => /^[\x21-\x7e]+$/.test(w);
+  const asciiWords = (list) => new Set(Array.from(list.set).filter(isAscii));
+  // words that contain none of the characters in use as separators
+  const without = (set, taken) => new Set(Array.from(set).filter((w) => !Array.from(taken).some((ch) => w.includes(ch))));
+  const choose = (n, k) => { let r = 1n; for (let i = 1; i <= k; i++) r = r * BigInt(n - k + i) / BigInt(i); return r; };
+  // ways to pick `count` words from a set whose letters total at most `letters`
+  const waysWithin = (set, count, letters) => {
     const histogram = new Map();
-    list.set.forEach((w) => histogram.set(length(w), (histogram.get(length(w)) || 0n) + 1n));
+    set.forEach((w) => histogram.set(length(w), (histogram.get(length(w)) || 0n) + 1n));
     let exact = new Map([[0, 1n]]);
     for (let i = 0; i < count; i++) {
       const next = new Map();
@@ -121,26 +86,195 @@ async function run(win) {
       exact = next;
     }
     let fitting = 0n;
-    exact.forEach((ways, total) => { if (total <= limit - (count - 1)) fitting += ways; });
-    const digits = fitting.toString(2);
-    return Math.log2(parseInt(digits.slice(0, 53), 2)) + Math.max(0, digits.length - 53);
+    exact.forEach((ways, total) => { if (total <= letters) fitting += ways; });
+    return fitting;
   };
-  assert(description.includes(Math.round(bitsWithin(english, 7, 96) * 100) / 100 +
-    ' bits of entropy with 7 words, at most 96 characters'), description);
-  // a tight limit is always respected, and the entropy shown drops to match
+  // ways to fill `slots` places with at least two digits and two of `marks` symbols
+  const separatorWays = (slots, marks) => {
+    let total = 0n;
+    for (let d = 2; d <= slots - 2; d++) total += choose(slots, d) * 10n ** BigInt(d) * BigInt(marks) ** BigInt(slots - d);
+    return total;
+  };
+  const bitsOf = (ways) => {
+    const digits = ways.toString(2);
+    return Math.round((Math.log2(parseInt(digits.slice(0, 53), 2)) + Math.max(0, digits.length - 53)) * 100) / 100;
+  };
+  const DEFAULT_SYMBOLS = '!@#$%^&*-_+=';
+  // split a passphrase made with digits and symbols into words and separators
+  const takeApart = (phrase, marks) => {
+    const isSeparator = (ch) => /\d/.test(ch) || marks.includes(ch);
+    const chars = Array.from(phrase);
+    return {
+      words: chars.map((ch) => (isSeparator(ch) ? ' ' : ch)).join('').trim().split(/ +/),
+      digits: chars.filter((ch) => /\d/.test(ch)).length,
+      marks: chars.filter((ch) => marks.includes(ch)).length
+    };
+  };
+  const lower = (w) => w.charAt(0).toLowerCase() + w.substring(1);
+  const check = (selector, on) => page('(function(){ var box = ' + q(selector) +
+    '; if(box.checked != ' + on + ') box.click(); })(); null');
+  const describes = (part, what) =>
+    waitFor(q('.wordlist-description') + '.textContent.includes(' + JSON.stringify(part) + ')', what);
+
+  // ---- the app starts on EFF Large
+  await waitFor(q('.passphrase') + '.textContent != ""', 'the first passphrase');
+  const eff = words('eff-large');
+  const effAscii = asciiWords(eff);
+  const row = (id) => '.lists-row input[value="' + id + '"]';
+  assert.strictEqual(await text('.wordlists-summary'), 'EFF Large');
+  assert.strictEqual(await page(q(row('eff-large')) + '.checked'), true);
+  // "-" is one of the symbols, so the few hyphenated words of this list are
+  // left out: a passphrase can then be read back in only one way
+  const effUsable = without(effAscii, '0123456789' + DEFAULT_SYMBOLS);
+  assert(effUsable.size < effAscii.size && effUsable.size > effAscii.size - 10);
+  assert((await text('.wordlist-description')).includes(effUsable.size + ' words, '));
+  for (let i = 0; i < 20; i++) {
+    await click('.button-generate');
+    const sample = await text('.passphrase');
+    const parts = takeApart(sample, DEFAULT_SYMBOLS);
+    assert.strictEqual(parts.words.length, 7, sample);
+    parts.words.forEach((w) => assert(effUsable.has(lower(w)), w + ' is a usable EFF Large word: ' + sample));
+    assert(length(sample) <= 96, sample);
+  }
+  assert((await text('.wordlist-description')).includes(
+    bitsOf(waysWithin(effUsable, 7, 96 - 6) * separatorWays(6, 12) * 120n) + ' bits of entropy with 7 words'));
+  // taking "-" out of the symbols brings the hyphenated words back
+  await set('input.symbols', '!@#', 'input');
+  await describes(effAscii.size + ' words, ', 'the hyphenated words again');
+  await set('input.symbols', DEFAULT_SYMBOLS, 'input');
+  await describes(effUsable.size + ' words, ', 'the default symbols again');
+
+  // ---- the rest of the option checks use English Wiktionary, whose words
+  // are letters only: seven words, capitals, numbers and symbols on, the
+  // common symbols, ASCII words only, at most 96 characters
+  const english = words('english-wiktionary');
+  const englishAscii = asciiWords(english);
+  await click(row('english-wiktionary'));
+  await click(row('eff-large'));
+  await describes(englishAscii.size + ' words, ', 'English Wiktionary');
+  assert.strictEqual(await text('.wordlists-summary'), 'English Wiktionary');
+  for (const id of ['#use-capitals', '#use-numbers', '#use-symbols', '#ascii-only']) {
+    assert.strictEqual(await page(q(id) + '.checked'), true, id + ' is on by default');
+  }
+  assert.strictEqual(await value('input.symbols'), DEFAULT_SYMBOLS);
+  assert.strictEqual(await page(q('input.max-length') + '.type'), 'number');
+  assert.strictEqual(await value('input.max-length'), '96');
+  assert.strictEqual(await value('select.words'), '7');
+
+  // every passphrase has at least two capitals, two digits and two symbols
+  for (let i = 0; i < 40; i++) {
+    await click('.button-generate');
+    const sample = await text('.passphrase');
+    const parts = takeApart(sample, DEFAULT_SYMBOLS);
+    assert.strictEqual(parts.words.length, 7, 'seven words: ' + sample);
+    parts.words.forEach((w) => assert(englishAscii.has(lower(w)), w + ' is an ASCII word of the list: ' + sample));
+    assert(parts.digits >= 2, 'at least two digits: ' + sample);
+    assert(parts.marks >= 2, 'at least two symbols: ' + sample);
+    assert.strictEqual(parts.digits + parts.marks, 6, 'one separator in each gap: ' + sample);
+    assert(parts.words.filter((w) => w != lower(w)).length >= 2, 'at least two capitals: ' + sample);
+    assert(length(sample) <= 96, 'fits in 96 characters: ' + sample);
+    assert.strictEqual(await text('.passphrase-length'), length(sample) + ' characters');
+  }
+
+  // the entropy counts the words, the capitals and the separators
+  let description = await text('.wordlist-description');
+  assert(description.includes(englishAscii.size + ' words, '), description);
+  const defaultWays = waysWithin(englishAscii, 7, 96 - 6) * separatorWays(6, 12) * (2n ** 7n - 7n - 1n);
+  assert(description.includes(bitsOf(defaultWays) + ' bits of entropy with 7 words, at most 96 characters'), description);
+
+  // nothing needs a scrollbar at the window's size
+  const fitsWindow = () => page('document.documentElement.scrollHeight <= window.innerHeight && document.documentElement.scrollWidth <= window.innerWidth');
+  assert.strictEqual(await fitsWindow(), true, 'the Generate tab fits the window');
+
+  // the guess time is plain for a strong passphrase
+  const guessTime = () => page('(function(){ var e = ' + q('.guess-time') +
+    '; return { weak: e.classList.contains("weak"), weight: getComputedStyle(e).fontWeight,' +
+    ' color: getComputedStyle(e).color, text: e.textContent }; })()');
+  let time = await guessTime();
+  assert.strictEqual(time.weak, false, 'the default is not flagged: ' + time.text);
+
+  // ---- three words need extra separators on the end to reach two of each
+  await set('select.words', '3', 'change');
+  await describes('with 3 words', 'three words');
+  for (let i = 0; i < 20; i++) {
+    await click('.button-generate');
+    const sample = await text('.passphrase');
+    const parts = takeApart(sample, DEFAULT_SYMBOLS);
+    assert.strictEqual(parts.words.length, 3, 'three words: ' + sample);
+    assert(parts.digits >= 2 && parts.marks >= 2, 'two digits and two symbols: ' + sample);
+    assert.strictEqual(parts.digits + parts.marks, 4, 'four separators: ' + sample);
+    assert(parts.words.filter((w) => w != lower(w)).length >= 2, 'at least two capitals: ' + sample);
+  }
+  description = await text('.wordlist-description');
+  assert(description.includes(bitsOf(waysWithin(englishAscii, 3, 96 - 4) * separatorWays(4, 12) * 4n) +
+    ' bits of entropy with 3 words'), description);
+
+  // ---- spaces are a choice of their own, offered only when neither numbers
+  // nor symbols separate the words, and off unless asked for
+  assert.strictEqual(await page(q('#use-spaces') + '.checked'), false, 'spaces are off by default');
+  assert.strictEqual(await page(q('#use-spaces') + '.disabled'), true, 'spaces wait for numbers and symbols to be off');
+  await check('#use-capitals', false);
+  await check('#use-numbers', false);
+  await check('#use-symbols', false);
+  assert.strictEqual(await page(q('#use-spaces') + '.disabled'), false);
+  await describes('Up to ' + bitsOf(waysWithin(englishAscii, 3, 96)) + ' bits', 'three words run together');
+  let passphrase = await text('.passphrase');
+  assert(/^[a-z]+$/.test(passphrase), 'no separators at all: ' + passphrase);
+  // with spaces switched on, three plain words can be guessed in hours: that
+  // is shown in bold red
+  await check('#use-spaces', true);
+  await describes(bitsOf(waysWithin(englishAscii, 3, 96 - 2)) + ' bits', 'three plain words');
+  passphrase = await text('.passphrase');
+  assert.strictEqual(passphrase.split(' ').length, 3, passphrase);
+  passphrase.split(' ').forEach((w) => assert(englishAscii.has(w), w));
+  time = await guessTime();
+  assert(/ (hours|days) average/.test(time.text), time.text);
+  assert.strictEqual(time.weak, true, 'three plain words are flagged: ' + time.text);
+  assert.strictEqual(time.weight, '700');
+  assert.strictEqual(time.color, 'rgb(204, 0, 0)');
+
+  // ---- the symbol field decides which symbols are used
+  await set('select.words', '5', 'change');
+  await check('#use-symbols', true);
+  await set('input.symbols', 'ab1 #!#', 'input');
+  await describes(bitsOf(waysWithin(englishAscii, 5, 96 - 4) * 2n ** 4n) + ' bits', 'two symbols only');
+  for (let i = 0; i < 10; i++) {
+    await click('.button-generate');
+    const sample = await text('.passphrase');
+    assert.strictEqual(sample.replace(/[a-z]/g, '').replace(/[#!]/g, ''), '', 'only # and ! between words: ' + sample);
+    assert.strictEqual(sample.replace(/[^#!]/g, '').length, 4, sample);
+  }
+  await page(q('input.symbols') + '.focus(); ' + q('input.symbols') + '.blur(); null');
+  assert.strictEqual(await value('input.symbols'), '#!', 'letters, digits, spaces and repeats are dropped');
+  // numbers only
+  await check('#use-symbols', false);
+  await check('#use-numbers', true);
+  await describes(bitsOf(waysWithin(englishAscii, 5, 96 - 4) * 10n ** 4n) + ' bits', 'numbers only');
+  passphrase = await text('.passphrase');
+  assert(/^[a-z]+(\d[a-z]+){4}$/.test(passphrase), passphrase);
+  // back to the defaults
+  assert.strictEqual(await page(q('#use-spaces') + '.disabled'), true);
+  await set('input.symbols', DEFAULT_SYMBOLS, 'input');
+  await check('#use-symbols', true);
+  await check('#use-capitals', true);
+  await set('select.words', '7', 'change');
+  await describes(bitsOf(defaultWays) + ' bits', 'the defaults again');
+
+  // ---- maximum length: a tight limit is always respected, and the entropy
+  // shown drops to match
   await set('input.max-length', '40', 'input');
-  await waitFor(q('.wordlist-description') + '.textContent.includes("at most 40 characters")', 'the 40 character limit');
+  await describes('at most 40 characters', 'the 40 character limit');
   for (let i = 0; i < 40; i++) {
     await click('.button-generate');
     const sample = await text('.passphrase');
     assert(length(sample) <= 40, 'fits in 40 characters: ' + sample);
+    assert.strictEqual(takeApart(sample, DEFAULT_SYMBOLS).words.length, 7, 'still seven words: ' + sample);
     assert.strictEqual(await text('.passphrase-length'), length(sample) + ' characters');
-    assert.strictEqual(sample.split(/[^\p{L}\p{M}]/u).length, 7, 'still seven words: ' + sample);
   }
   description = await text('.wordlist-description');
-  const tightBits = bitsWithin(english, 7, 40);
-  assert(tightBits < bits - 10, 'a 40 character limit costs entropy');
-  assert(description.includes(Math.round(tightBits * 100) / 100 + ' bits of entropy with 7 words, at most 40 characters'), description);
+  const tightWays = waysWithin(englishAscii, 7, 40 - 6) * separatorWays(6, 12) * 120n;
+  assert(bitsOf(tightWays) < bitsOf(defaultWays) - 10, 'a 40 character limit costs entropy');
+  assert(description.includes(bitsOf(tightWays) + ' bits of entropy with 7 words, at most 40 characters'), description);
   // a limit nothing can meet says so, and there is nothing to memorize
   await set('input.max-length', '12', 'input');
   await waitForText('.wordlist-description', 'No passphrase of 7 words', 'the does-not-fit message');
@@ -149,55 +283,73 @@ async function run(win) {
   await click('.button-memorize');
   assert.strictEqual(await page(q('.content-generate') + '.classList.contains("active")'), true);
   await set('input.max-length', '96', 'input');
-  await waitFor(q('.passphrase') + '.textContent != ""', 'a passphrase again');
+  await describes(bitsOf(defaultWays) + ' bits', 'the defaults again');
 
-  // nothing needs a scrollbar at the window's size
-  assert.strictEqual(
-    await page('document.documentElement.scrollHeight <= window.innerHeight && document.documentElement.scrollWidth <= window.innerWidth'),
-    true, 'the page fits the window');
+  // ---- the Word lists tab: every list, grouped by language, English first
+  await click('.wordlists-summary');
+  assert.strictEqual(await page(q('.content-lists') + '.classList.contains("active")'), true);
+  assert.strictEqual(await page('document.querySelectorAll(".lists-row").length'), english.count,
+    'one row per manifest entry');
+  const languages = await page('Array.from(document.querySelectorAll(".lists-language")).map(function(e){ return e.textContent; })');
+  assert.strictEqual(languages[0], 'English');
+  assert.deepStrictEqual(languages.slice(1), languages.slice(1).sort((a, b) => a.localeCompare(b)),
+    'the other languages are in alphabetical order');
+  const englishRows = await page('Array.from(document.querySelectorAll(".lists-group")[0].querySelectorAll(".lists-name")).map(function(e){ return e.textContent; })');
+  assert(englishRows.includes('EFF Large') && englishRows.includes('English Wiktionary'), englishRows.join(', '));
+  assert.strictEqual(await text('.lists-count'), '1 of ' + english.count + ' selected');
+  assert.strictEqual(await fitsWindow(), true, 'the Word lists tab fits the window');
+  const visibleRows = () => page('Array.from(document.querySelectorAll(".lists-row")).filter(function(r){ return r.offsetParent !== null; }).map(function(r){ return r.querySelector("input").value; })');
 
-  // plain settings for the checks below
-  await click('#use-upcase');
-  assert.strictEqual(await page(q('#use-upcase') + '.checked'), false);
-  await set('select.separator', '0', 'change');
-  await waitFor(q('.passphrase') + '.textContent.split(" ").length == 7', 'space separators');
+  // typing narrows the lists
+  await set('.lists-filter', 'swed', 'input');
+  assert.deepStrictEqual((await visibleRows()).sort(),
+    ['swedish-diceware', 'swedish-wiktionary', 'swedish-wiktionary-short']);
+  await set('.lists-filter', '', 'input');
+  assert.strictEqual((await visibleRows()).length, english.count);
+
+  // two lists switched on are combined, with repeats counted once
+  await click(row('eff-large'));
+  const combined = without(new Set([...englishAscii, ...effAscii]), '0123456789' + DEFAULT_SYMBOLS);
+  await describes(combined.size + ' words, ', 'the combined lists');
+  assert.strictEqual(await text('.wordlists-summary'), '2 word lists');
+  assert.strictEqual(await text('.lists-count'), '2 of ' + english.count + ' selected');
+  description = await text('.wordlist-description');
+  assert(description.startsWith('2 word lists combined: EFF Large, English Wiktionary'), description);
+  // EFF Large on its own
+  await click(row('english-wiktionary'));
+  await describes(effUsable.size + ' words, ', 'the EFF list alone');
+  assert.strictEqual(await text('.wordlists-summary'), 'EFF Large');
+  for (let i = 0; i < 10; i++) {
+    await click('.button-generate');
+    const sample = await text('.passphrase');
+    takeApart(sample, DEFAULT_SYMBOLS).words.forEach((w) => assert(effUsable.has(lower(w)), w + ' is a usable EFF Large word: ' + sample));
+  }
+  // the last list cannot be switched off
+  await click(row('eff-large'));
+  assert.strictEqual(await page(q(row('eff-large')) + '.checked'), true, 'one list always stays on');
+
+  // ---- ASCII words only: a list in another script has nothing to offer
+  // until the option is switched off
+  const russian = words('russian-wiktionary');
+  await click(row('russian-wiktionary'));
+  await click(row('eff-large'));
+  await waitForText('.wordlist-description', 'These word lists have no words that can be used', 'the no-usable-words message');
+  assert.strictEqual(await text('.passphrase'), '');
+  await check('#ascii-only', false);
+  await describes(russian.set.size + ' words, ', 'the whole Russian list');
   passphrase = await text('.passphrase');
-
-  // the Generate button draws a new passphrase
-  await click('.button-generate');
-  assert.notStrictEqual(await text('.passphrase'), passphrase, 'Generate changes the passphrase');
-
-  // typing part of a name and pressing Enter finds the list
-  const typeAndEnter = async (typed) => {
-    await page(q('input.wordlists') + '.focus(); null');
-    await set('input.wordlists', typed, 'input');
-    await page(q('input.wordlists') +
-      '.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true })); null');
-  };
+  assert(/[Ѐ-ӿ]/.test(passphrase), 'Cyrillic words: ' + passphrase);
+  await check('#ascii-only', true);
+  // back to English Wiktionary, plain settings for the checks below
+  await click(row('english-wiktionary'));
+  await click(row('russian-wiktionary'));
+  await click('.tab-generate');
+  await check('#use-capitals', false);
+  await check('#use-symbols', false);
   await set('select.words', '4', 'change');
-  await typeAndEnter('swed');
-  await waitForText('.wordlist-description', 'Swedish', 'the Swedish list');
-  assert.strictEqual(await value('input.wordlists'), 'Swedish Wiktionary');
-  // text that matches nothing keeps the current list
-  await typeAndEnter('no such list');
-  await page(q('input.wordlists') + '.blur(); null');
-  assert.strictEqual(await value('input.wordlists'), 'Swedish Wiktionary');
-  // a full name, as picked from the suggestions, selects without Enter
-  const french = words('french-wiktionary');
-  await set('input.wordlists', 'French Wiktionary', 'input');
-  await waitForText('.wordlist-description', 'French', 'the French list');
+  await describes(bitsOf(waysWithin(englishAscii, 4, 96 - 3) * 10n ** 3n) + ' bits', 'four words and numbers');
   passphrase = await text('.passphrase');
-  parts = passphrase.split(' ');
-  assert.strictEqual(parts.length, 4, 'four words');
-  parts.forEach((w) => assert(french.set.has(w), w + ' is in the French list'));
-
-  // number separators
-  await set('select.separator', '1', 'change');
-  await waitFor('/\\d/.test(' + q('.passphrase') + '.textContent)', 'number separators');
-  passphrase = await text('.passphrase');
-  parts = passphrase.split(/\d/);
-  assert.strictEqual(parts.length, 4);
-  parts.forEach((w) => assert(french.set.has(w), w + ' is in the French list'));
+  assert(/^[a-z]+(\d[a-z]+){3}$/.test(passphrase), passphrase);
 
   // an unknown list id is refused by the main process
   assert.strictEqual(

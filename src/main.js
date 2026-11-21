@@ -100,7 +100,7 @@ function openInBrowser(url) {
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 680,
-    height: 440,
+    height: 480,
     useContentSize: true,
     resizable: false,
     maximizable: false,

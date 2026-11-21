@@ -8,23 +8,29 @@
 ![Electron 45](https://img.shields.io/badge/Electron-45-47848f?logo=electron&logoColor=white)
 ![Runtime dependencies: 0](https://img.shields.io/badge/runtime%20dependencies-0-brightgreen)
 ![Platforms: Linux, Windows, macOS](https://img.shields.io/badge/platforms-Linux%20%7C%20Windows%20%7C%20macOS-lightgrey)
-![258 word lists](https://img.shields.io/badge/word%20lists-258-informational)
+![261 word lists](https://img.shields.io/badge/word%20lists-261-informational)
 ![137 languages](https://img.shields.io/badge/languages-137-informational)
 
 A desktop tool that generates high-entropy passphrases and helps you memorize them with spaced repetition.
 
 <p align="center">
-  <img src="screenshots/generate.png" width="420" alt="The Generate tab">
+  <img src="screenshots/generate.png" width="420" alt="The Generate tab with the default options">
+  <img src="screenshots/word-lists.png" width="420" alt="The Word lists tab, grouped by language">
+</p>
+<p align="center">
+  <img src="screenshots/memorize.png" width="420" alt="The Memorize tab part way through a try">
   <img src="screenshots/low-contrast.png" width="420" alt="The Generate tab in a low-contrast color style">
 </p>
 
 ## Features
 
 - **Random where it counts.** Words are drawn with the operating system's cryptographic random number generator, with no modulo bias.
-- **258 word lists in 137 languages.** They are built from Wiktionary, plus the Diceware, EOWL and SecureDrop lists. Type in the list box to find one.
+- **261 word lists in 137 languages.** They are built from Wiktionary, plus the EFF, Diceware, EOWL and SecureDrop lists. The Word lists tab groups them by language with English first, and typing narrows them down.
+- **Mix lists.** Switch on more than one and passphrases are drawn from all of them combined.
 - **Clean lists.** A single list of 22,104 slurs and vulgar words, covering all languages, is filtered out of every list.
 - **A maximum length that is honoured exactly.** Every passphrase that fits is equally likely, and the entropy shown is the real figure for that limit.
-- **Separators and capitals.** Spaces, digits, punctuation, or digits and punctuation between words, with optional capital letters.
+- **Made for sites with password rules.** Capital letters, numbers and symbols are each a checkbox, and every kind that is on appears at least twice. The symbols come from a field you can edit to match what a site accepts; it starts with the commonly accepted ones.
+- **ASCII words only, by default.** Words with accented or non-Latin letters are left out unless you switch that off, because many sites mishandle them.
 - **Fourteen color styles.** They include low-contrast ones that draw the passphrase at about 3:1 contrast, readable at the keyboard and hard to read from across a room.
 - **Private.** Nothing is saved except the sound and color settings, and nothing is sent over the Internet.
 
@@ -69,7 +75,7 @@ flowchart LR
         IPC["IPC handlers"]
     end
     UI --> API --> IPC
-    IPC --> WL[("wordlists/<br/>manifest.json + 258 lists")]
+    IPC --> WL[("wordlists/<br/>manifest.json + 261 lists")]
     IPC --> PREFS[("passphrases.conf<br/>sound, color style")]
     IPC --> BROWSER["system browser<br/>https links only"]
 ```
@@ -80,13 +86,13 @@ A Content-Security-Policy allows only the app's own files, and the page asks for
 
 ```mermaid
 flowchart TD
-    A["Options: list, word count,<br/>separator, capitals, maximum length"] --> B["Count the word combinations<br/>that fit the maximum length"]
+    A["Options: lists, word count, capitals,<br/>numbers, symbols, maximum length"] --> B["Count the word combinations<br/>that fit the maximum length"]
     B -->|none fit| C["Say so; no passphrase"]
     B -->|some fit| D["Pick each word's length in proportion<br/>to the ways the rest can still fit"]
     D --> E["Pick a word of that length"]
-    E --> F["Capitalize it or not, add a separator"]
-    F -->|more words| D
-    F -->|done| G["Show the passphrase, its length<br/>and its entropy"]
+    E -->|more words| D
+    E -->|done| F["Add capitals, numbers and symbols:<br/>at least two of each kind that is on"]
+    F --> G["Show the passphrase, its length<br/>and its entropy"]
     R(["crypto.getRandomValues"]) -.-> D
     R -.-> E
     R -.-> F
@@ -110,8 +116,6 @@ stateDiagram-v2
 
 The hint appears later on each try, the field turns into a password field after five tries, and the rests grow from one minute to an hour. A notification says when a rest is over.
 
-<p align="center"><img src="screenshots/memorize.png" width="420" alt="The Memorize tab"></p>
-
 ### Building the word lists
 
 ```mermaid
@@ -119,7 +123,7 @@ flowchart LR
     K["Kaikki.org extract of<br/>English Wiktionary<br/>11.1 million entries"] --> X["extract<br/>entries.tsv"]
     X --> F["Filter: headwords only,<br/>letters only, 3 to 30 characters"]
     BL["tools/blocklist.txt<br/>22,104 words"] --> F
-    O["Diceware, EOWL,<br/>SecureDrop lists"] --> N["Normalize, deduplicate"]
+    O["EFF, Diceware, EOWL,<br/>SecureDrop lists"] --> N["Normalize, deduplicate"]
     BL --> N
     F --> T{"At least<br/>2,048 words?"}
     T -->|yes| OUT["src/wordlists/<br/>+ manifest.json"]
@@ -156,4 +160,4 @@ npm start
 
 Passphrases is a fork of [micahflee/passphrases](https://github.com/micahflee/passphrases) by Micah Lee, released under the [MIT license](LICENSE.md).
 
-Word lists: [Wiktionary](https://www.wiktionary.org/) via [Kaikki.org](https://kaikki.org/) (CC BY-SA), the Diceware lists and their translators, the English Open Word List, and SecureDrop. The blocklist draws on [LDNOOBW](https://github.com/LDNOOBW/List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words) (CC BY 4.0). Color palettes: Solarized, Nord, Gruvbox, Dracula and Zenburn.
+Word lists: [Wiktionary](https://www.wiktionary.org/) via [Kaikki.org](https://kaikki.org/) (CC BY-SA), the [EFF wordlists](https://www.eff.org/dice) (CC BY 4.0), the Diceware lists and their translators, the English Open Word List, and SecureDrop. The blocklist draws on [LDNOOBW](https://github.com/LDNOOBW/List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words) (CC BY 4.0). Color palettes: Solarized, Nord, Gruvbox, Dracula and Zenburn.

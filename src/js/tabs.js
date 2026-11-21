@@ -22,7 +22,7 @@
 */
 
 document.addEventListener('DOMContentLoaded', function(){
-  var tabs = ['generate', 'memorize', 'about'];
+  var tabs = ['generate', 'lists', 'memorize', 'about'];
 
   function showTab(name) {
     tabs.forEach(function(tab){
@@ -45,7 +45,8 @@ document.addEventListener('DOMContentLoaded', function(){
     });
   });
 
-  // let the outside world switch to memorize tab
+  // let the outside world switch tabs
+  Passphrases.showTab = showTab;
   Passphrases.tabMemorize = function(){
     showTab('memorize');
   };

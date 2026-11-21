@@ -10,6 +10,7 @@
 :root[data-theme="solarized-light"],
 :root[data-theme="solarized-light-low"] {
   color-scheme: light;
+  --danger: #dc322f;
   --page-bg: #fdf6e3;
   --nav-bg: #eee8d5;
   --tab: #93a1a1;
@@ -40,6 +41,7 @@
 :root[data-theme="solarized-dark"],
 :root[data-theme="solarized-dark-low"] {
   color-scheme: dark;
+  --danger: #dc322f;
   --page-bg: #002b36;
   --nav-bg: #073642;
   --tab: #657b83;
@@ -70,6 +72,7 @@
 :root[data-theme="nord"],
 :root[data-theme="nord-low"] {
   color-scheme: dark;
+  --danger: #d9737d;
   --page-bg: #2e3440;
   --nav-bg: #242933;
   --tab: #7b88a1;
@@ -100,6 +103,7 @@
 :root[data-theme="gruvbox-light"],
 :root[data-theme="gruvbox-light-low"] {
   color-scheme: light;
+  --danger: #cc241d;
   --page-bg: #fbf1c7;
   --nav-bg: #ebdbb2;
   --tab: #7c6f64;
@@ -130,6 +134,7 @@
 :root[data-theme="gruvbox-dark"],
 :root[data-theme="gruvbox-dark-low"] {
   color-scheme: dark;
+  --danger: #fb4934;
   --page-bg: #282828;
   --nav-bg: #1d2021;
   --tab: #928374;
@@ -159,6 +164,7 @@
 /* Dracula */
 :root[data-theme="dracula"] {
   color-scheme: dark;
+  --danger: #ff5555;
   --page-bg: #282a36;
   --nav-bg: #21222c;
   --tab: #6272a4;
@@ -186,6 +192,7 @@
 :root[data-theme="zenburn"],
 :root[data-theme="zenburn-low"] {
   color-scheme: dark;
+  --danger: #e89393;
   --page-bg: #3f3f3f;
   --nav-bg: #2b2b2b;
   --tab: #9f9f8f;

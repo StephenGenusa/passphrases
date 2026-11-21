@@ -43,7 +43,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     <div class="wrapper">
       <!-- navigation -->
       <ul class="navigation">
-        <li class="tab tab-generate">Generate</li><li class="tab tab-memorize">Memorize</li><li class="tab tab-about">About</li>
+        <li class="tab tab-generate">Generate</li><li class="tab tab-lists">Word lists</li><li class="tab tab-memorize">Memorize</li><li class="tab tab-about">About</li>
       </ul>
 
       <!-- content -->
@@ -53,12 +53,19 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         <div class="content content-generate">
           <div class="generate-top">
             <div class="generate-options">
-              <input type="text" class="wordlists" list="wordlists-options" title="Type to find a word list" autocomplete="off" spellcheck="false">
-              <datalist id="wordlists-options"></datalist>
-              <select class="words"></select>
-              <select class="separator"></select>
-              <label class="max-length-label" title="The longest passphrase to generate, in characters">Maximum length <input type="number" class="max-length" min="8" max="999" step="1" value="96"></label>
-              <label><input type="checkbox" id="use-upcase" class="use-upcase" name="use-upcase" checked> Use Uppercase</label>
+              <button type="button" class="wordlists-summary"></button>
+              <div class="option-row">
+                <select class="words"></select>
+                <label title="The longest passphrase to generate, in characters">Max length <input type="number" class="max-length" min="8" max="999" step="1" value="96"></label>
+              </div>
+              <label><input type="checkbox" id="use-capitals" checked> Capital letters</label>
+              <label><input type="checkbox" id="use-numbers" checked> Numbers</label>
+              <div class="option-row">
+                <label><input type="checkbox" id="use-symbols" checked> Symbols</label>
+                <input type="text" class="symbols" value="!@#$%^&amp;*-_+=" title="The symbols to use. Edit this to match what the site accepts." autocomplete="off" spellcheck="false">
+              </div>
+              <label title="Put a space between words. Available when numbers and symbols are both off."><input type="checkbox" id="use-spaces"> Spaces between words</label>
+              <label title="Leave out words with accented or non-Latin letters, which many sites do not accept"><input type="checkbox" id="ascii-only" checked> ASCII words only</label>
             </div>
             <p class="wordlist-description"></p>
           </div>
@@ -72,6 +79,16 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             <div class="btn button-generate">Generate</div>
             <div class="btn button-memorize">Memorize</div>
           </div>
+        </div>
+
+        <!-- word lists -->
+        <div class="content content-lists">
+          <div class="lists-toolbar">
+            <input type="search" class="lists-filter" placeholder="Type to find a word list or language" autocomplete="off" spellcheck="false">
+            <span class="lists-count"></span>
+          </div>
+          <div class="lists-box"></div>
+          <p class="lists-note">Passphrases are drawn from all the lists that are switched on, combined.</p>
         </div>
 
         <!-- memorize -->
