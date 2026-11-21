@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Passphrases application icon: a key whose bow is a die and whose blade is
+     made of words. Source for every icon file; see BUILD.md to regenerate. -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2f6fb4"/>
+      <stop offset="1" stop-color="#16325c"/>
+    </linearGradient>
+    <!-- the key, lying flat; drawn twice below, as shadow and as key -->
+    <g id="key">
+      <!-- bow: a die -->
+      <rect x="112" y="352" width="320" height="320" rx="72"/>
+      <!-- blade: three words -->
+      <rect x="454" y="462" width="150" height="100" rx="50"/>
+      <rect x="622" y="462" width="118" height="100" rx="50"/>
+      <rect x="758" y="462" width="162" height="100" rx="50"/>
+      <!-- teeth -->
+      <rect x="652" y="512" width="58" height="126" rx="16"/>
+      <rect x="824" y="512" width="58" height="162" rx="16"/>
+    </g>
+  </defs>
+
+  <rect x="64" y="64" width="896" height="896" rx="208" fill="url(#bg)"/>
+  <rect x="66" y="66" width="892" height="892" rx="206" fill="none" stroke="#ffffff" stroke-opacity="0.10" stroke-width="4"/>
+
+  <g transform="translate(0 18) rotate(-45 512 512)" fill="#0a1a33" fill-opacity="0.35">
+    <use xlink:href="#key" href="#key"/>
+  </g>
+  <g transform="rotate(-45 512 512)">
+    <use xlink:href="#key" href="#key" fill="#f4f8fd"/>
+    <!-- the die shows five -->
+    <g fill="#1d4480">
+      <circle cx="190" cy="430" r="33"/>
+      <circle cx="354" cy="430" r="33"/>
+      <circle cx="272" cy="512" r="33"/>
+      <circle cx="190" cy="594" r="33"/>
+      <circle cx="354" cy="594" r="33"/>
+    </g>
+  </g>
+</svg>

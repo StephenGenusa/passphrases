@@ -1,0 +1,2330 @@
+{
+ "generated": "2026-11-21",
+ "min_words": 2048,
+ "wiktionary_source": "https://kaikki.org/dictionary/raw-wiktextract-data.jsonl.gz",
+ "wiktionary_source_date": "2026-11-21",
+ "lists": [
+  {
+   "id": "securedrop",
+   "file": "securedrop.wordlist",
+   "name": "SecureDrop",
+   "description": "English wordlist from the SecureDrop project",
+   "count": 6738,
+   "license": "",
+   "source": "bundled"
+  },
+  {
+   "id": "english-diceware",
+   "file": "english-diceware.wordlist",
+   "name": "English Diceware",
+   "description": "Original English Diceware wordlist",
+   "count": 7671,
+   "license": "",
+   "source": "bundled"
+  },
+  {
+   "id": "eowl",
+   "file": "eowl.wordlist",
+   "name": "English Open Word List",
+   "description": "The English Open Word List. Copyright © J Ross Beresford 1993-1999. All Rights Reserved.",
+   "count": 128255,
+   "license": "See eowl_license.txt",
+   "source": "bundled"
+  },
+  {
+   "id": "catalan-diceware",
+   "file": "catalan-diceware.wordlist",
+   "name": "Catalan Diceware",
+   "description": "Diccionari català per Marcel Hernandez",
+   "count": 7741,
+   "license": "CC BY 4.0",
+   "source": "bundled"
+  },
+  {
+   "id": "german-diceware",
+   "file": "german-diceware.wordlist",
+   "name": "Deutsch Diceware",
+   "description": "Deutsch Wörterbuch, von Benjamin Tenne",
+   "count": 7677,
+   "license": "GPL",
+   "source": "bundled"
+  },
+  {
+   "id": "french-diceware",
+   "file": "french-diceware.wordlist",
+   "name": "Français Diceware",
+   "description": "Dictionnaire français par Matthieu Weber",
+   "count": 7667,
+   "license": "",
+   "source": "bundled"
+  },
+  {
+   "id": "italian-diceware",
+   "file": "italian-diceware.wordlist",
+   "name": "Italiano Diceware",
+   "description": "Lista di parole Diceware in Italiano by Tarin Gamberini",
+   "count": 7720,
+   "license": "GPL",
+   "source": "bundled"
+  },
+  {
+   "id": "japanese-diceware",
+   "file": "japanese-diceware.wordlist",
+   "name": "Japanese Diceware",
+   "description": "Japanese Diceware by Hiroshi Yuki & J Greely",
+   "count": 7756,
+   "license": "CC BY-SA",
+   "source": "bundled"
+  },
+  {
+   "id": "dutch-diceware",
+   "file": "dutch-diceware.wordlist",
+   "name": "Dutch Diceware",
+   "description": "Nederlands woordenboek door Bart Van den Eynde",
+   "count": 7677,
+   "license": "GPL",
+   "source": "bundled"
+  },
+  {
+   "id": "polish-diceware",
+   "file": "polish-diceware.wordlist",
+   "name": "Polski Diceware",
+   "description": "Polski Słownik przez Piotr (DrFugazi) Tarnowski",
+   "count": 7612,
+   "license": "",
+   "source": "bundled"
+  },
+  {
+   "id": "swedish-diceware",
+   "file": "swedish-diceware.wordlist",
+   "name": "Svensk Diceware",
+   "description": "Svensk ordbok av Magnus Bodin",
+   "count": 7651,
+   "license": "",
+   "source": "bundled"
+  },
+  {
+   "id": "afrikaans-wiktionary",
+   "file": "afrikaans-wiktionary.wordlist",
+   "name": "Afrikaans Wiktionary",
+   "description": "Afrikaans words from Wiktionary",
+   "count": 4388,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "afrikaans-wiktionary-short",
+   "file": "afrikaans-wiktionary-short.wordlist",
+   "name": "Afrikaans Short-Word Wiktionary",
+   "description": "Afrikaans words from Wiktionary",
+   "count": 2388,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "albanian-wiktionary",
+   "file": "albanian-wiktionary.wordlist",
+   "name": "Albanian Wiktionary",
+   "description": "Albanian words from Wiktionary",
+   "count": 9486,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "albanian-wiktionary-short",
+   "file": "albanian-wiktionary-short.wordlist",
+   "name": "Albanian Short-Word Wiktionary",
+   "description": "Albanian words from Wiktionary",
+   "count": 6693,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "ancient-greek-wiktionary",
+   "file": "ancient-greek-wiktionary.wordlist",
+   "name": "Ancient Greek Wiktionary",
+   "description": "Ancient Greek words from Wiktionary",
+   "count": 16055,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "ancient-greek-wiktionary-short",
+   "file": "ancient-greek-wiktionary-short.wordlist",
+   "name": "Ancient Greek Short-Word Wiktionary",
+   "description": "Ancient Greek words from Wiktionary",
+   "count": 8375,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "arabic-wiktionary",
+   "file": "arabic-wiktionary.wordlist",
+   "name": "Arabic Wiktionary",
+   "description": "Arabic words from Wiktionary",
+   "count": 16566,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "arabic-wiktionary-short",
+   "file": "arabic-wiktionary-short.wordlist",
+   "name": "Arabic Short-Word Wiktionary",
+   "description": "Arabic words from Wiktionary",
+   "count": 16275,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "armenian-wiktionary",
+   "file": "armenian-wiktionary.wordlist",
+   "name": "Armenian Wiktionary",
+   "description": "Armenian words from Wiktionary",
+   "count": 13564,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "armenian-wiktionary-short",
+   "file": "armenian-wiktionary-short.wordlist",
+   "name": "Armenian Short-Word Wiktionary",
+   "description": "Armenian words from Wiktionary",
+   "count": 7534,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "aromanian-wiktionary",
+   "file": "aromanian-wiktionary.wordlist",
+   "name": "Aromanian Wiktionary",
+   "description": "Aromanian words from Wiktionary",
+   "count": 2866,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "assamese-wiktionary",
+   "file": "assamese-wiktionary.wordlist",
+   "name": "Assamese Wiktionary",
+   "description": "Assamese words from Wiktionary",
+   "count": 3000,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "assamese-wiktionary-short",
+   "file": "assamese-wiktionary-short.wordlist",
+   "name": "Assamese Short-Word Wiktionary",
+   "description": "Assamese words from Wiktionary",
+   "count": 2745,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "assyrian-neo-aramaic-wiktionary",
+   "file": "assyrian-neo-aramaic-wiktionary.wordlist",
+   "name": "Assyrian Neo-Aramaic Wiktionary",
+   "description": "Assyrian Neo-Aramaic words from Wiktionary",
+   "count": 4417,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "assyrian-neo-aramaic-wiktionary-short",
+   "file": "assyrian-neo-aramaic-wiktionary-short.wordlist",
+   "name": "Assyrian Neo-Aramaic Short-Word Wiktionary",
+   "description": "Assyrian Neo-Aramaic words from Wiktionary",
+   "count": 4271,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "asturian-wiktionary",
+   "file": "asturian-wiktionary.wordlist",
+   "name": "Asturian Wiktionary",
+   "description": "Asturian words from Wiktionary",
+   "count": 6532,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "asturian-wiktionary-short",
+   "file": "asturian-wiktionary-short.wordlist",
+   "name": "Asturian Short-Word Wiktionary",
+   "description": "Asturian words from Wiktionary",
+   "count": 3601,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "azerbaijani-wiktionary",
+   "file": "azerbaijani-wiktionary.wordlist",
+   "name": "Azerbaijani Wiktionary",
+   "description": "Azerbaijani words from Wiktionary",
+   "count": 9085,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "azerbaijani-wiktionary-short",
+   "file": "azerbaijani-wiktionary-short.wordlist",
+   "name": "Azerbaijani Short-Word Wiktionary",
+   "description": "Azerbaijani words from Wiktionary",
+   "count": 5850,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "bashkir-wiktionary",
+   "file": "bashkir-wiktionary.wordlist",
+   "name": "Bashkir Wiktionary",
+   "description": "Bashkir words from Wiktionary",
+   "count": 2376,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "bashkir-wiktionary-short",
+   "file": "bashkir-wiktionary-short.wordlist",
+   "name": "Bashkir Short-Word Wiktionary",
+   "description": "Bashkir words from Wiktionary",
+   "count": 2103,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "basque-wiktionary",
+   "file": "basque-wiktionary.wordlist",
+   "name": "Basque Wiktionary",
+   "description": "Basque words from Wiktionary",
+   "count": 3920,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "basque-wiktionary-short",
+   "file": "basque-wiktionary-short.wordlist",
+   "name": "Basque Short-Word Wiktionary",
+   "description": "Basque words from Wiktionary",
+   "count": 2281,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "belarusian-wiktionary",
+   "file": "belarusian-wiktionary.wordlist",
+   "name": "Belarusian Wiktionary",
+   "description": "Belarusian words from Wiktionary",
+   "count": 7172,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "belarusian-wiktionary-short",
+   "file": "belarusian-wiktionary-short.wordlist",
+   "name": "Belarusian Short-Word Wiktionary",
+   "description": "Belarusian words from Wiktionary",
+   "count": 3786,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "bengali-wiktionary",
+   "file": "bengali-wiktionary.wordlist",
+   "name": "Bengali Wiktionary",
+   "description": "Bengali words from Wiktionary",
+   "count": 7264,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "bengali-wiktionary-short",
+   "file": "bengali-wiktionary-short.wordlist",
+   "name": "Bengali Short-Word Wiktionary",
+   "description": "Bengali words from Wiktionary",
+   "count": 5509,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "bulgarian-wiktionary",
+   "file": "bulgarian-wiktionary.wordlist",
+   "name": "Bulgarian Wiktionary",
+   "description": "Bulgarian words from Wiktionary",
+   "count": 16385,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "bulgarian-wiktionary-short",
+   "file": "bulgarian-wiktionary-short.wordlist",
+   "name": "Bulgarian Short-Word Wiktionary",
+   "description": "Bulgarian words from Wiktionary",
+   "count": 9504,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "burmese-wiktionary",
+   "file": "burmese-wiktionary.wordlist",
+   "name": "Burmese Wiktionary",
+   "description": "Burmese words from Wiktionary",
+   "count": 7340,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "burmese-wiktionary-short",
+   "file": "burmese-wiktionary-short.wordlist",
+   "name": "Burmese Short-Word Wiktionary",
+   "description": "Burmese words from Wiktionary",
+   "count": 4231,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "catalan-wiktionary",
+   "file": "catalan-wiktionary.wordlist",
+   "name": "Catalan Wiktionary",
+   "description": "Catalan words from Wiktionary",
+   "count": 25292,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "catalan-wiktionary-short",
+   "file": "catalan-wiktionary-short.wordlist",
+   "name": "Catalan Short-Word Wiktionary",
+   "description": "Catalan words from Wiktionary",
+   "count": 11358,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "cebuano-wiktionary",
+   "file": "cebuano-wiktionary.wordlist",
+   "name": "Cebuano Wiktionary",
+   "description": "Cebuano words from Wiktionary",
+   "count": 9313,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "cebuano-wiktionary-short",
+   "file": "cebuano-wiktionary-short.wordlist",
+   "name": "Cebuano Short-Word Wiktionary",
+   "description": "Cebuano words from Wiktionary",
+   "count": 6134,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "central-bikol-wiktionary",
+   "file": "central-bikol-wiktionary.wordlist",
+   "name": "Central Bikol Wiktionary",
+   "description": "Central Bikol words from Wiktionary",
+   "count": 5323,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "central-bikol-wiktionary-short",
+   "file": "central-bikol-wiktionary-short.wordlist",
+   "name": "Central Bikol Short-Word Wiktionary",
+   "description": "Central Bikol words from Wiktionary",
+   "count": 3612,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "chinese-wiktionary",
+   "file": "chinese-wiktionary.wordlist",
+   "name": "Chinese Wiktionary",
+   "description": "Chinese words from Wiktionary",
+   "count": 127172,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "chinese-wiktionary-short",
+   "file": "chinese-wiktionary-short.wordlist",
+   "name": "Chinese Short-Word Wiktionary",
+   "description": "Chinese words from Wiktionary",
+   "count": 127087,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "cimbrian-wiktionary",
+   "file": "cimbrian-wiktionary.wordlist",
+   "name": "Cimbrian Wiktionary",
+   "description": "Cimbrian words from Wiktionary",
+   "count": 2260,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "classical-nahuatl-wiktionary",
+   "file": "classical-nahuatl-wiktionary.wordlist",
+   "name": "Classical Nahuatl Wiktionary",
+   "description": "Classical Nahuatl words from Wiktionary",
+   "count": 2215,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "classical-syriac-wiktionary",
+   "file": "classical-syriac-wiktionary.wordlist",
+   "name": "Classical Syriac Wiktionary",
+   "description": "Classical Syriac words from Wiktionary",
+   "count": 2282,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "classical-syriac-wiktionary-short",
+   "file": "classical-syriac-wiktionary-short.wordlist",
+   "name": "Classical Syriac Short-Word Wiktionary",
+   "description": "Classical Syriac words from Wiktionary",
+   "count": 2243,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "cornish-wiktionary",
+   "file": "cornish-wiktionary.wordlist",
+   "name": "Cornish Wiktionary",
+   "description": "Cornish words from Wiktionary",
+   "count": 4932,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "cornish-wiktionary-short",
+   "file": "cornish-wiktionary-short.wordlist",
+   "name": "Cornish Short-Word Wiktionary",
+   "description": "Cornish words from Wiktionary",
+   "count": 3393,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "crimean-tatar-wiktionary",
+   "file": "crimean-tatar-wiktionary.wordlist",
+   "name": "Crimean Tatar Wiktionary",
+   "description": "Crimean Tatar words from Wiktionary",
+   "count": 3996,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "crimean-tatar-wiktionary-short",
+   "file": "crimean-tatar-wiktionary-short.wordlist",
+   "name": "Crimean Tatar Short-Word Wiktionary",
+   "description": "Crimean Tatar words from Wiktionary",
+   "count": 2721,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "czech-wiktionary",
+   "file": "czech-wiktionary.wordlist",
+   "name": "Czech Wiktionary",
+   "description": "Czech words from Wiktionary",
+   "count": 32851,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "czech-wiktionary-short",
+   "file": "czech-wiktionary-short.wordlist",
+   "name": "Czech Short-Word Wiktionary",
+   "description": "Czech words from Wiktionary",
+   "count": 15670,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "danish-wiktionary",
+   "file": "danish-wiktionary.wordlist",
+   "name": "Danish Wiktionary",
+   "description": "Danish words from Wiktionary",
+   "count": 20455,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "danish-wiktionary-short",
+   "file": "danish-wiktionary-short.wordlist",
+   "name": "Danish Short-Word Wiktionary",
+   "description": "Danish words from Wiktionary",
+   "count": 8654,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "dutch-wiktionary",
+   "file": "dutch-wiktionary.wordlist",
+   "name": "Dutch Wiktionary",
+   "description": "Dutch words from Wiktionary",
+   "count": 49882,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "dutch-wiktionary-short",
+   "file": "dutch-wiktionary-short.wordlist",
+   "name": "Dutch Short-Word Wiktionary",
+   "description": "Dutch words from Wiktionary",
+   "count": 13484,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "english-wiktionary",
+   "file": "english-wiktionary.wordlist",
+   "name": "English Wiktionary",
+   "description": "English words from Wiktionary",
+   "count": 422255,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "english-wiktionary-short",
+   "file": "english-wiktionary-short.wordlist",
+   "name": "English Short-Word Wiktionary",
+   "description": "English words from Wiktionary",
+   "count": 76243,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "esperanto-wiktionary",
+   "file": "esperanto-wiktionary.wordlist",
+   "name": "Esperanto Wiktionary",
+   "description": "Esperanto words from Wiktionary",
+   "count": 17193,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "esperanto-wiktionary-short",
+   "file": "esperanto-wiktionary-short.wordlist",
+   "name": "Esperanto Short-Word Wiktionary",
+   "description": "Esperanto words from Wiktionary",
+   "count": 9420,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "estonian-wiktionary",
+   "file": "estonian-wiktionary.wordlist",
+   "name": "Estonian Wiktionary",
+   "description": "Estonian words from Wiktionary",
+   "count": 6074,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "estonian-wiktionary-short",
+   "file": "estonian-wiktionary-short.wordlist",
+   "name": "Estonian Short-Word Wiktionary",
+   "description": "Estonian words from Wiktionary",
+   "count": 3667,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "faroese-wiktionary",
+   "file": "faroese-wiktionary.wordlist",
+   "name": "Faroese Wiktionary",
+   "description": "Faroese words from Wiktionary",
+   "count": 5078,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "faroese-wiktionary-short",
+   "file": "faroese-wiktionary-short.wordlist",
+   "name": "Faroese Short-Word Wiktionary",
+   "description": "Faroese words from Wiktionary",
+   "count": 3127,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "finnish-wiktionary",
+   "file": "finnish-wiktionary.wordlist",
+   "name": "Finnish Wiktionary",
+   "description": "Finnish words from Wiktionary",
+   "count": 154991,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "finnish-wiktionary-short",
+   "file": "finnish-wiktionary-short.wordlist",
+   "name": "Finnish Short-Word Wiktionary",
+   "description": "Finnish words from Wiktionary",
+   "count": 19836,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "french-wiktionary",
+   "file": "french-wiktionary.wordlist",
+   "name": "French Wiktionary",
+   "description": "French words from Wiktionary",
+   "count": 62489,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "french-wiktionary-short",
+   "file": "french-wiktionary-short.wordlist",
+   "name": "French Short-Word Wiktionary",
+   "description": "French words from Wiktionary",
+   "count": 17584,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "galician-wiktionary",
+   "file": "galician-wiktionary.wordlist",
+   "name": "Galician Wiktionary",
+   "description": "Galician words from Wiktionary",
+   "count": 16364,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "galician-wiktionary-short",
+   "file": "galician-wiktionary-short.wordlist",
+   "name": "Galician Short-Word Wiktionary",
+   "description": "Galician words from Wiktionary",
+   "count": 7679,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "georgian-wiktionary",
+   "file": "georgian-wiktionary.wordlist",
+   "name": "Georgian Wiktionary",
+   "description": "Georgian words from Wiktionary",
+   "count": 17519,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "georgian-wiktionary-short",
+   "file": "georgian-wiktionary-short.wordlist",
+   "name": "Georgian Short-Word Wiktionary",
+   "description": "Georgian words from Wiktionary",
+   "count": 7044,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "german-wiktionary",
+   "file": "german-wiktionary.wordlist",
+   "name": "German Wiktionary",
+   "description": "German words from Wiktionary",
+   "count": 75005,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "german-wiktionary-short",
+   "file": "german-wiktionary-short.wordlist",
+   "name": "German Short-Word Wiktionary",
+   "description": "German words from Wiktionary",
+   "count": 14068,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "gothic-wiktionary",
+   "file": "gothic-wiktionary.wordlist",
+   "name": "Gothic Wiktionary",
+   "description": "Gothic words from Wiktionary",
+   "count": 3306,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "greek-wiktionary",
+   "file": "greek-wiktionary.wordlist",
+   "name": "Greek Wiktionary",
+   "description": "Greek words from Wiktionary",
+   "count": 24844,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "greek-wiktionary-short",
+   "file": "greek-wiktionary-short.wordlist",
+   "name": "Greek Short-Word Wiktionary",
+   "description": "Greek words from Wiktionary",
+   "count": 7452,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "gujarati-wiktionary",
+   "file": "gujarati-wiktionary.wordlist",
+   "name": "Gujarati Wiktionary",
+   "description": "Gujarati words from Wiktionary",
+   "count": 5516,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "gujarati-wiktionary-short",
+   "file": "gujarati-wiktionary-short.wordlist",
+   "name": "Gujarati Short-Word Wiktionary",
+   "description": "Gujarati words from Wiktionary",
+   "count": 4565,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "hebrew-wiktionary",
+   "file": "hebrew-wiktionary.wordlist",
+   "name": "Hebrew Wiktionary",
+   "description": "Hebrew words from Wiktionary",
+   "count": 8926,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "hebrew-wiktionary-short",
+   "file": "hebrew-wiktionary-short.wordlist",
+   "name": "Hebrew Short-Word Wiktionary",
+   "description": "Hebrew words from Wiktionary",
+   "count": 8566,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "hindi-wiktionary",
+   "file": "hindi-wiktionary.wordlist",
+   "name": "Hindi Wiktionary",
+   "description": "Hindi words from Wiktionary",
+   "count": 16957,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "hindi-wiktionary-short",
+   "file": "hindi-wiktionary-short.wordlist",
+   "name": "Hindi Short-Word Wiktionary",
+   "description": "Hindi words from Wiktionary",
+   "count": 13332,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "hungarian-wiktionary",
+   "file": "hungarian-wiktionary.wordlist",
+   "name": "Hungarian Wiktionary",
+   "description": "Hungarian words from Wiktionary",
+   "count": 31517,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "hungarian-wiktionary-short",
+   "file": "hungarian-wiktionary-short.wordlist",
+   "name": "Hungarian Short-Word Wiktionary",
+   "description": "Hungarian words from Wiktionary",
+   "count": 13627,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "icelandic-wiktionary",
+   "file": "icelandic-wiktionary.wordlist",
+   "name": "Icelandic Wiktionary",
+   "description": "Icelandic words from Wiktionary",
+   "count": 15133,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "icelandic-wiktionary-short",
+   "file": "icelandic-wiktionary-short.wordlist",
+   "name": "Icelandic Short-Word Wiktionary",
+   "description": "Icelandic words from Wiktionary",
+   "count": 7990,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "ido-wiktionary",
+   "file": "ido-wiktionary.wordlist",
+   "name": "Ido Wiktionary",
+   "description": "Ido words from Wiktionary",
+   "count": 6233,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "ido-wiktionary-short",
+   "file": "ido-wiktionary-short.wordlist",
+   "name": "Ido Short-Word Wiktionary",
+   "description": "Ido words from Wiktionary",
+   "count": 3325,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "indonesian-wiktionary",
+   "file": "indonesian-wiktionary.wordlist",
+   "name": "Indonesian Wiktionary",
+   "description": "Indonesian words from Wiktionary",
+   "count": 21414,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "indonesian-wiktionary-short",
+   "file": "indonesian-wiktionary-short.wordlist",
+   "name": "Indonesian Short-Word Wiktionary",
+   "description": "Indonesian words from Wiktionary",
+   "count": 12256,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "ingrian-wiktionary",
+   "file": "ingrian-wiktionary.wordlist",
+   "name": "Ingrian Wiktionary",
+   "description": "Ingrian words from Wiktionary",
+   "count": 7003,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "ingrian-wiktionary-short",
+   "file": "ingrian-wiktionary-short.wordlist",
+   "name": "Ingrian Short-Word Wiktionary",
+   "description": "Ingrian words from Wiktionary",
+   "count": 3764,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "interlingua-wiktionary",
+   "file": "interlingua-wiktionary.wordlist",
+   "name": "Interlingua Wiktionary",
+   "description": "Interlingua words from Wiktionary",
+   "count": 2142,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "irish-wiktionary",
+   "file": "irish-wiktionary.wordlist",
+   "name": "Irish Wiktionary",
+   "description": "Irish words from Wiktionary",
+   "count": 15308,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "irish-wiktionary-short",
+   "file": "irish-wiktionary-short.wordlist",
+   "name": "Irish Short-Word Wiktionary",
+   "description": "Irish words from Wiktionary",
+   "count": 6505,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "italian-wiktionary",
+   "file": "italian-wiktionary.wordlist",
+   "name": "Italian Wiktionary",
+   "description": "Italian words from Wiktionary",
+   "count": 125742,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "italian-wiktionary-short",
+   "file": "italian-wiktionary-short.wordlist",
+   "name": "Italian Short-Word Wiktionary",
+   "description": "Italian words from Wiktionary",
+   "count": 16986,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "japanese-wiktionary",
+   "file": "japanese-wiktionary.wordlist",
+   "name": "Japanese Wiktionary",
+   "description": "Japanese words from Wiktionary",
+   "count": 62694,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "japanese-wiktionary-short",
+   "file": "japanese-wiktionary-short.wordlist",
+   "name": "Japanese Short-Word Wiktionary",
+   "description": "Japanese words from Wiktionary",
+   "count": 61050,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "javanese-wiktionary",
+   "file": "javanese-wiktionary.wordlist",
+   "name": "Javanese Wiktionary",
+   "description": "Javanese words from Wiktionary",
+   "count": 2797,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "javanese-wiktionary-short",
+   "file": "javanese-wiktionary-short.wordlist",
+   "name": "Javanese Short-Word Wiktionary",
+   "description": "Javanese words from Wiktionary",
+   "count": 2524,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "kannada-wiktionary",
+   "file": "kannada-wiktionary.wordlist",
+   "name": "Kannada Wiktionary",
+   "description": "Kannada words from Wiktionary",
+   "count": 2086,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "kashubian-wiktionary",
+   "file": "kashubian-wiktionary.wordlist",
+   "name": "Kashubian Wiktionary",
+   "description": "Kashubian words from Wiktionary",
+   "count": 2337,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "kazakh-wiktionary",
+   "file": "kazakh-wiktionary.wordlist",
+   "name": "Kazakh Wiktionary",
+   "description": "Kazakh words from Wiktionary",
+   "count": 9493,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "kazakh-wiktionary-short",
+   "file": "kazakh-wiktionary-short.wordlist",
+   "name": "Kazakh Short-Word Wiktionary",
+   "description": "Kazakh words from Wiktionary",
+   "count": 5358,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "khiamniungan-naga-wiktionary",
+   "file": "khiamniungan-naga-wiktionary.wordlist",
+   "name": "Khiamniungan Naga Wiktionary",
+   "description": "Khiamniungan Naga words from Wiktionary",
+   "count": 4185,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "khiamniungan-naga-wiktionary-short",
+   "file": "khiamniungan-naga-wiktionary-short.wordlist",
+   "name": "Khiamniungan Naga Short-Word Wiktionary",
+   "description": "Khiamniungan Naga words from Wiktionary",
+   "count": 2447,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "khmer-wiktionary",
+   "file": "khmer-wiktionary.wordlist",
+   "name": "Khmer Wiktionary",
+   "description": "Khmer words from Wiktionary",
+   "count": 8097,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "khmer-wiktionary-short",
+   "file": "khmer-wiktionary-short.wordlist",
+   "name": "Khmer Short-Word Wiktionary",
+   "description": "Khmer words from Wiktionary",
+   "count": 5601,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "korean-wiktionary",
+   "file": "korean-wiktionary.wordlist",
+   "name": "Korean Wiktionary",
+   "description": "Korean words from Wiktionary",
+   "count": 28659,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "korean-wiktionary-short",
+   "file": "korean-wiktionary-short.wordlist",
+   "name": "Korean Short-Word Wiktionary",
+   "description": "Korean words from Wiktionary",
+   "count": 28622,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "kyrgyz-wiktionary",
+   "file": "kyrgyz-wiktionary.wordlist",
+   "name": "Kyrgyz Wiktionary",
+   "description": "Kyrgyz words from Wiktionary",
+   "count": 2139,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "latin-wiktionary",
+   "file": "latin-wiktionary.wordlist",
+   "name": "Latin Wiktionary",
+   "description": "Latin words from Wiktionary",
+   "count": 36046,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "latin-wiktionary-short",
+   "file": "latin-wiktionary-short.wordlist",
+   "name": "Latin Short-Word Wiktionary",
+   "description": "Latin words from Wiktionary",
+   "count": 11157,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "latvian-wiktionary",
+   "file": "latvian-wiktionary.wordlist",
+   "name": "Latvian Wiktionary",
+   "description": "Latvian words from Wiktionary",
+   "count": 14473,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "latvian-wiktionary-short",
+   "file": "latvian-wiktionary-short.wordlist",
+   "name": "Latvian Short-Word Wiktionary",
+   "description": "Latvian words from Wiktionary",
+   "count": 5298,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "laz-wiktionary",
+   "file": "laz-wiktionary.wordlist",
+   "name": "Laz Wiktionary",
+   "description": "Laz words from Wiktionary",
+   "count": 2257,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "lithuanian-wiktionary",
+   "file": "lithuanian-wiktionary.wordlist",
+   "name": "Lithuanian Wiktionary",
+   "description": "Lithuanian words from Wiktionary",
+   "count": 6419,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "lithuanian-wiktionary-short",
+   "file": "lithuanian-wiktionary-short.wordlist",
+   "name": "Lithuanian Short-Word Wiktionary",
+   "description": "Lithuanian words from Wiktionary",
+   "count": 2970,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "livonian-wiktionary",
+   "file": "livonian-wiktionary.wordlist",
+   "name": "Livonian Wiktionary",
+   "description": "Livonian words from Wiktionary",
+   "count": 2278,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "luxembourgish-wiktionary",
+   "file": "luxembourgish-wiktionary.wordlist",
+   "name": "Luxembourgish Wiktionary",
+   "description": "Luxembourgish words from Wiktionary",
+   "count": 6335,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "luxembourgish-wiktionary-short",
+   "file": "luxembourgish-wiktionary-short.wordlist",
+   "name": "Luxembourgish Short-Word Wiktionary",
+   "description": "Luxembourgish words from Wiktionary",
+   "count": 3182,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "macedonian-wiktionary",
+   "file": "macedonian-wiktionary.wordlist",
+   "name": "Macedonian Wiktionary",
+   "description": "Macedonian words from Wiktionary",
+   "count": 38358,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "macedonian-wiktionary-short",
+   "file": "macedonian-wiktionary-short.wordlist",
+   "name": "Macedonian Short-Word Wiktionary",
+   "description": "Macedonian words from Wiktionary",
+   "count": 15039,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "makasar-wiktionary",
+   "file": "makasar-wiktionary.wordlist",
+   "name": "Makasar Wiktionary",
+   "description": "Makasar words from Wiktionary",
+   "count": 3864,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "malagasy-wiktionary",
+   "file": "malagasy-wiktionary.wordlist",
+   "name": "Malagasy Wiktionary",
+   "description": "Malagasy words from Wiktionary",
+   "count": 3044,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "malay-wiktionary",
+   "file": "malay-wiktionary.wordlist",
+   "name": "Malay Wiktionary",
+   "description": "Malay words from Wiktionary",
+   "count": 7256,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "malay-wiktionary-short",
+   "file": "malay-wiktionary-short.wordlist",
+   "name": "Malay Short-Word Wiktionary",
+   "description": "Malay words from Wiktionary",
+   "count": 5079,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "malayalam-wiktionary",
+   "file": "malayalam-wiktionary.wordlist",
+   "name": "Malayalam Wiktionary",
+   "description": "Malayalam words from Wiktionary",
+   "count": 9296,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "malayalam-wiktionary-short",
+   "file": "malayalam-wiktionary-short.wordlist",
+   "name": "Malayalam Short-Word Wiktionary",
+   "description": "Malayalam words from Wiktionary",
+   "count": 5943,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "maltese-wiktionary",
+   "file": "maltese-wiktionary.wordlist",
+   "name": "Maltese Wiktionary",
+   "description": "Maltese words from Wiktionary",
+   "count": 8346,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "maltese-wiktionary-short",
+   "file": "maltese-wiktionary-short.wordlist",
+   "name": "Maltese Short-Word Wiktionary",
+   "description": "Maltese words from Wiktionary",
+   "count": 5549,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "marathi-wiktionary",
+   "file": "marathi-wiktionary.wordlist",
+   "name": "Marathi Wiktionary",
+   "description": "Marathi words from Wiktionary",
+   "count": 4477,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "marathi-wiktionary-short",
+   "file": "marathi-wiktionary-short.wordlist",
+   "name": "Marathi Short-Word Wiktionary",
+   "description": "Marathi words from Wiktionary",
+   "count": 3908,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "middle-english-wiktionary",
+   "file": "middle-english-wiktionary.wordlist",
+   "name": "Middle English Wiktionary",
+   "description": "Middle English words from Wiktionary",
+   "count": 8532,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "middle-english-wiktionary-short",
+   "file": "middle-english-wiktionary-short.wordlist",
+   "name": "Middle English Short-Word Wiktionary",
+   "description": "Middle English words from Wiktionary",
+   "count": 5822,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "middle-french-wiktionary",
+   "file": "middle-french-wiktionary.wordlist",
+   "name": "Middle French Wiktionary",
+   "description": "Middle French words from Wiktionary",
+   "count": 3285,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "mongolian-wiktionary",
+   "file": "mongolian-wiktionary.wordlist",
+   "name": "Mongolian Wiktionary",
+   "description": "Mongolian words from Wiktionary",
+   "count": 3115,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "mongolian-wiktionary-short",
+   "file": "mongolian-wiktionary-short.wordlist",
+   "name": "Mongolian Short-Word Wiktionary",
+   "description": "Mongolian words from Wiktionary",
+   "count": 2471,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "navajo-wiktionary",
+   "file": "navajo-wiktionary.wordlist",
+   "name": "Navajo Wiktionary",
+   "description": "Navajo words from Wiktionary",
+   "count": 5001,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "navajo-wiktionary-short",
+   "file": "navajo-wiktionary-short.wordlist",
+   "name": "Navajo Short-Word Wiktionary",
+   "description": "Navajo words from Wiktionary",
+   "count": 2249,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "norman-wiktionary",
+   "file": "norman-wiktionary.wordlist",
+   "name": "Norman Wiktionary",
+   "description": "Norman words from Wiktionary",
+   "count": 5149,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "norman-wiktionary-short",
+   "file": "norman-wiktionary-short.wordlist",
+   "name": "Norman Short-Word Wiktionary",
+   "description": "Norman words from Wiktionary",
+   "count": 2886,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "northern-kurdish-wiktionary",
+   "file": "northern-kurdish-wiktionary.wordlist",
+   "name": "Northern Kurdish Wiktionary",
+   "description": "Northern Kurdish words from Wiktionary",
+   "count": 2447,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "northern-sami-wiktionary",
+   "file": "northern-sami-wiktionary.wordlist",
+   "name": "Northern Sami Wiktionary",
+   "description": "Northern Sami words from Wiktionary",
+   "count": 3571,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "northern-sami-wiktionary-short",
+   "file": "northern-sami-wiktionary-short.wordlist",
+   "name": "Northern Sami Short-Word Wiktionary",
+   "description": "Northern Sami words from Wiktionary",
+   "count": 2481,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "northern-yukaghir-wiktionary",
+   "file": "northern-yukaghir-wiktionary.wordlist",
+   "name": "Northern Yukaghir Wiktionary",
+   "description": "Northern Yukaghir words from Wiktionary",
+   "count": 2611,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "norwegian-bokmal-wiktionary",
+   "file": "norwegian-bokmal-wiktionary.wordlist",
+   "name": "Norwegian Bokmål Wiktionary",
+   "description": "Norwegian Bokmål words from Wiktionary",
+   "count": 20064,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "norwegian-bokmal-wiktionary-short",
+   "file": "norwegian-bokmal-wiktionary-short.wordlist",
+   "name": "Norwegian Bokmål Short-Word Wiktionary",
+   "description": "Norwegian Bokmål words from Wiktionary",
+   "count": 8423,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "norwegian-nynorsk-wiktionary",
+   "file": "norwegian-nynorsk-wiktionary.wordlist",
+   "name": "Norwegian Nynorsk Wiktionary",
+   "description": "Norwegian Nynorsk words from Wiktionary",
+   "count": 18222,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "norwegian-nynorsk-wiktionary-short",
+   "file": "norwegian-nynorsk-wiktionary-short.wordlist",
+   "name": "Norwegian Nynorsk Short-Word Wiktionary",
+   "description": "Norwegian Nynorsk words from Wiktionary",
+   "count": 9384,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "occitan-wiktionary",
+   "file": "occitan-wiktionary.wordlist",
+   "name": "Occitan Wiktionary",
+   "description": "Occitan words from Wiktionary",
+   "count": 3974,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "occitan-wiktionary-short",
+   "file": "occitan-wiktionary-short.wordlist",
+   "name": "Occitan Short-Word Wiktionary",
+   "description": "Occitan words from Wiktionary",
+   "count": 2380,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "old-armenian-wiktionary",
+   "file": "old-armenian-wiktionary.wordlist",
+   "name": "Old Armenian Wiktionary",
+   "description": "Old Armenian words from Wiktionary",
+   "count": 4735,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "old-armenian-wiktionary-short",
+   "file": "old-armenian-wiktionary-short.wordlist",
+   "name": "Old Armenian Short-Word Wiktionary",
+   "description": "Old Armenian words from Wiktionary",
+   "count": 3614,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "old-church-slavonic-wiktionary",
+   "file": "old-church-slavonic-wiktionary.wordlist",
+   "name": "Old Church Slavonic Wiktionary",
+   "description": "Old Church Slavonic words from Wiktionary",
+   "count": 3257,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "old-church-slavonic-wiktionary-short",
+   "file": "old-church-slavonic-wiktionary-short.wordlist",
+   "name": "Old Church Slavonic Short-Word Wiktionary",
+   "description": "Old Church Slavonic words from Wiktionary",
+   "count": 2121,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "old-czech-wiktionary",
+   "file": "old-czech-wiktionary.wordlist",
+   "name": "Old Czech Wiktionary",
+   "description": "Old Czech words from Wiktionary",
+   "count": 2253,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "old-english-wiktionary",
+   "file": "old-english-wiktionary.wordlist",
+   "name": "Old English Wiktionary",
+   "description": "Old English words from Wiktionary",
+   "count": 13127,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "old-english-wiktionary-short",
+   "file": "old-english-wiktionary-short.wordlist",
+   "name": "Old English Short-Word Wiktionary",
+   "description": "Old English words from Wiktionary",
+   "count": 7138,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "old-french-wiktionary",
+   "file": "old-french-wiktionary.wordlist",
+   "name": "Old French Wiktionary",
+   "description": "Old French words from Wiktionary",
+   "count": 5117,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "old-french-wiktionary-short",
+   "file": "old-french-wiktionary-short.wordlist",
+   "name": "Old French Short-Word Wiktionary",
+   "description": "Old French words from Wiktionary",
+   "count": 3105,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "old-irish-wiktionary",
+   "file": "old-irish-wiktionary.wordlist",
+   "name": "Old Irish Wiktionary",
+   "description": "Old Irish words from Wiktionary",
+   "count": 2625,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "old-norse-wiktionary",
+   "file": "old-norse-wiktionary.wordlist",
+   "name": "Old Norse Wiktionary",
+   "description": "Old Norse words from Wiktionary",
+   "count": 3860,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "old-norse-wiktionary-short",
+   "file": "old-norse-wiktionary-short.wordlist",
+   "name": "Old Norse Short-Word Wiktionary",
+   "description": "Old Norse words from Wiktionary",
+   "count": 3206,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "old-polish-wiktionary",
+   "file": "old-polish-wiktionary.wordlist",
+   "name": "Old Polish Wiktionary",
+   "description": "Old Polish words from Wiktionary",
+   "count": 2458,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "ottoman-turkish-wiktionary",
+   "file": "ottoman-turkish-wiktionary.wordlist",
+   "name": "Ottoman Turkish Wiktionary",
+   "description": "Ottoman Turkish words from Wiktionary",
+   "count": 6098,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "ottoman-turkish-wiktionary-short",
+   "file": "ottoman-turkish-wiktionary-short.wordlist",
+   "name": "Ottoman Turkish Short-Word Wiktionary",
+   "description": "Ottoman Turkish words from Wiktionary",
+   "count": 5659,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "pali-wiktionary",
+   "file": "pali-wiktionary.wordlist",
+   "name": "Pali Wiktionary",
+   "description": "Pali words from Wiktionary",
+   "count": 3233,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "pali-wiktionary-short",
+   "file": "pali-wiktionary-short.wordlist",
+   "name": "Pali Short-Word Wiktionary",
+   "description": "Pali words from Wiktionary",
+   "count": 2339,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "palula-wiktionary",
+   "file": "palula-wiktionary.wordlist",
+   "name": "Palula Wiktionary",
+   "description": "Palula words from Wiktionary",
+   "count": 2082,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "pannonian-rusyn-wiktionary",
+   "file": "pannonian-rusyn-wiktionary.wordlist",
+   "name": "Pannonian Rusyn Wiktionary",
+   "description": "Pannonian Rusyn words from Wiktionary",
+   "count": 5657,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "pannonian-rusyn-wiktionary-short",
+   "file": "pannonian-rusyn-wiktionary-short.wordlist",
+   "name": "Pannonian Rusyn Short-Word Wiktionary",
+   "description": "Pannonian Rusyn words from Wiktionary",
+   "count": 3183,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "persian-wiktionary",
+   "file": "persian-wiktionary.wordlist",
+   "name": "Persian Wiktionary",
+   "description": "Persian words from Wiktionary",
+   "count": 9990,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "persian-wiktionary-short",
+   "file": "persian-wiktionary-short.wordlist",
+   "name": "Persian Short-Word Wiktionary",
+   "description": "Persian words from Wiktionary",
+   "count": 9433,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "plautdietsch-wiktionary",
+   "file": "plautdietsch-wiktionary.wordlist",
+   "name": "Plautdietsch Wiktionary",
+   "description": "Plautdietsch words from Wiktionary",
+   "count": 4387,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "plautdietsch-wiktionary-short",
+   "file": "plautdietsch-wiktionary-short.wordlist",
+   "name": "Plautdietsch Short-Word Wiktionary",
+   "description": "Plautdietsch words from Wiktionary",
+   "count": 2091,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "polish-wiktionary",
+   "file": "polish-wiktionary.wordlist",
+   "name": "Polish Wiktionary",
+   "description": "Polish words from Wiktionary",
+   "count": 61104,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "polish-wiktionary-short",
+   "file": "polish-wiktionary-short.wordlist",
+   "name": "Polish Short-Word Wiktionary",
+   "description": "Polish words from Wiktionary",
+   "count": 22358,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "portuguese-wiktionary",
+   "file": "portuguese-wiktionary.wordlist",
+   "name": "Portuguese Wiktionary",
+   "description": "Portuguese words from Wiktionary",
+   "count": 52454,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "portuguese-wiktionary-short",
+   "file": "portuguese-wiktionary-short.wordlist",
+   "name": "Portuguese Short-Word Wiktionary",
+   "description": "Portuguese words from Wiktionary",
+   "count": 16651,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "punjabi-wiktionary",
+   "file": "punjabi-wiktionary.wordlist",
+   "name": "Punjabi Wiktionary",
+   "description": "Punjabi words from Wiktionary",
+   "count": 5949,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "punjabi-wiktionary-short",
+   "file": "punjabi-wiktionary-short.wordlist",
+   "name": "Punjabi Short-Word Wiktionary",
+   "description": "Punjabi words from Wiktionary",
+   "count": 5693,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "romanian-wiktionary",
+   "file": "romanian-wiktionary.wordlist",
+   "name": "Romanian Wiktionary",
+   "description": "Romanian words from Wiktionary",
+   "count": 66154,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "romanian-wiktionary-short",
+   "file": "romanian-wiktionary-short.wordlist",
+   "name": "Romanian Short-Word Wiktionary",
+   "description": "Romanian words from Wiktionary",
+   "count": 24257,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "russian-wiktionary",
+   "file": "russian-wiktionary.wordlist",
+   "name": "Russian Wiktionary",
+   "description": "Russian words from Wiktionary",
+   "count": 46209,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "russian-wiktionary-short",
+   "file": "russian-wiktionary-short.wordlist",
+   "name": "Russian Short-Word Wiktionary",
+   "description": "Russian words from Wiktionary",
+   "count": 15551,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "sanskrit-wiktionary",
+   "file": "sanskrit-wiktionary.wordlist",
+   "name": "Sanskrit Wiktionary",
+   "description": "Sanskrit words from Wiktionary",
+   "count": 8011,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "sanskrit-wiktionary-short",
+   "file": "sanskrit-wiktionary-short.wordlist",
+   "name": "Sanskrit Short-Word Wiktionary",
+   "description": "Sanskrit words from Wiktionary",
+   "count": 6580,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "scots-wiktionary",
+   "file": "scots-wiktionary.wordlist",
+   "name": "Scots Wiktionary",
+   "description": "Scots words from Wiktionary",
+   "count": 2691,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "scots-wiktionary-short",
+   "file": "scots-wiktionary-short.wordlist",
+   "name": "Scots Short-Word Wiktionary",
+   "description": "Scots words from Wiktionary",
+   "count": 2119,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "scottish-gaelic-wiktionary",
+   "file": "scottish-gaelic-wiktionary.wordlist",
+   "name": "Scottish Gaelic Wiktionary",
+   "description": "Scottish Gaelic words from Wiktionary",
+   "count": 5160,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "scottish-gaelic-wiktionary-short",
+   "file": "scottish-gaelic-wiktionary-short.wordlist",
+   "name": "Scottish Gaelic Short-Word Wiktionary",
+   "description": "Scottish Gaelic words from Wiktionary",
+   "count": 3026,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "serbo-croatian-wiktionary",
+   "file": "serbo-croatian-wiktionary.wordlist",
+   "name": "Serbo-Croatian Wiktionary",
+   "description": "Serbo-Croatian words from Wiktionary",
+   "count": 50037,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "serbo-croatian-wiktionary-short",
+   "file": "serbo-croatian-wiktionary-short.wordlist",
+   "name": "Serbo-Croatian Short-Word Wiktionary",
+   "description": "Serbo-Croatian words from Wiktionary",
+   "count": 23036,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "shan-wiktionary",
+   "file": "shan-wiktionary.wordlist",
+   "name": "Shan Wiktionary",
+   "description": "Shan words from Wiktionary",
+   "count": 2517,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "silesian-wiktionary",
+   "file": "silesian-wiktionary.wordlist",
+   "name": "Silesian Wiktionary",
+   "description": "Silesian words from Wiktionary",
+   "count": 2080,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "slovak-wiktionary",
+   "file": "slovak-wiktionary.wordlist",
+   "name": "Slovak Wiktionary",
+   "description": "Slovak words from Wiktionary",
+   "count": 7365,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "slovak-wiktionary-short",
+   "file": "slovak-wiktionary-short.wordlist",
+   "name": "Slovak Short-Word Wiktionary",
+   "description": "Slovak words from Wiktionary",
+   "count": 4199,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "slovene-wiktionary",
+   "file": "slovene-wiktionary.wordlist",
+   "name": "Slovene Wiktionary",
+   "description": "Slovene words from Wiktionary",
+   "count": 3808,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "slovene-wiktionary-short",
+   "file": "slovene-wiktionary-short.wordlist",
+   "name": "Slovene Short-Word Wiktionary",
+   "description": "Slovene words from Wiktionary",
+   "count": 2611,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "south-levantine-arabic-wiktionary",
+   "file": "south-levantine-arabic-wiktionary.wordlist",
+   "name": "South Levantine Arabic Wiktionary",
+   "description": "South Levantine Arabic words from Wiktionary",
+   "count": 2330,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "south-levantine-arabic-wiktionary-short",
+   "file": "south-levantine-arabic-wiktionary-short.wordlist",
+   "name": "South Levantine Arabic Short-Word Wiktionary",
+   "description": "South Levantine Arabic words from Wiktionary",
+   "count": 2327,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "spanish-wiktionary",
+   "file": "spanish-wiktionary.wordlist",
+   "name": "Spanish Wiktionary",
+   "description": "Spanish words from Wiktionary",
+   "count": 81837,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "spanish-wiktionary-short",
+   "file": "spanish-wiktionary-short.wordlist",
+   "name": "Spanish Short-Word Wiktionary",
+   "description": "Spanish words from Wiktionary",
+   "count": 23077,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "sundanese-wiktionary",
+   "file": "sundanese-wiktionary.wordlist",
+   "name": "Sundanese Wiktionary",
+   "description": "Sundanese words from Wiktionary",
+   "count": 2792,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "sundanese-wiktionary-short",
+   "file": "sundanese-wiktionary-short.wordlist",
+   "name": "Sundanese Short-Word Wiktionary",
+   "description": "Sundanese words from Wiktionary",
+   "count": 2234,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "swahili-wiktionary",
+   "file": "swahili-wiktionary.wordlist",
+   "name": "Swahili Wiktionary",
+   "description": "Swahili words from Wiktionary",
+   "count": 8538,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "swahili-wiktionary-short",
+   "file": "swahili-wiktionary-short.wordlist",
+   "name": "Swahili Short-Word Wiktionary",
+   "description": "Swahili words from Wiktionary",
+   "count": 6223,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "swedish-wiktionary",
+   "file": "swedish-wiktionary.wordlist",
+   "name": "Swedish Wiktionary",
+   "description": "Swedish words from Wiktionary",
+   "count": 50249,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "swedish-wiktionary-short",
+   "file": "swedish-wiktionary-short.wordlist",
+   "name": "Swedish Short-Word Wiktionary",
+   "description": "Swedish words from Wiktionary",
+   "count": 16346,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "tagalog-wiktionary",
+   "file": "tagalog-wiktionary.wordlist",
+   "name": "Tagalog Wiktionary",
+   "description": "Tagalog words from Wiktionary",
+   "count": 19558,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "tagalog-wiktionary-short",
+   "file": "tagalog-wiktionary-short.wordlist",
+   "name": "Tagalog Short-Word Wiktionary",
+   "description": "Tagalog words from Wiktionary",
+   "count": 10715,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "tajik-wiktionary",
+   "file": "tajik-wiktionary.wordlist",
+   "name": "Tajik Wiktionary",
+   "description": "Tajik words from Wiktionary",
+   "count": 2723,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "tamil-wiktionary",
+   "file": "tamil-wiktionary.wordlist",
+   "name": "Tamil Wiktionary",
+   "description": "Tamil words from Wiktionary",
+   "count": 8522,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "tamil-wiktionary-short",
+   "file": "tamil-wiktionary-short.wordlist",
+   "name": "Tamil Short-Word Wiktionary",
+   "description": "Tamil words from Wiktionary",
+   "count": 5072,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "telugu-wiktionary",
+   "file": "telugu-wiktionary.wordlist",
+   "name": "Telugu Wiktionary",
+   "description": "Telugu words from Wiktionary",
+   "count": 12892,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "telugu-wiktionary-short",
+   "file": "telugu-wiktionary-short.wordlist",
+   "name": "Telugu Short-Word Wiktionary",
+   "description": "Telugu words from Wiktionary",
+   "count": 7429,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "thai-wiktionary",
+   "file": "thai-wiktionary.wordlist",
+   "name": "Thai Wiktionary",
+   "description": "Thai words from Wiktionary",
+   "count": 14521,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "thai-wiktionary-short",
+   "file": "thai-wiktionary-short.wordlist",
+   "name": "Thai Short-Word Wiktionary",
+   "description": "Thai words from Wiktionary",
+   "count": 9092,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "turkish-wiktionary",
+   "file": "turkish-wiktionary.wordlist",
+   "name": "Turkish Wiktionary",
+   "description": "Turkish words from Wiktionary",
+   "count": 16974,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "turkish-wiktionary-short",
+   "file": "turkish-wiktionary-short.wordlist",
+   "name": "Turkish Short-Word Wiktionary",
+   "description": "Turkish words from Wiktionary",
+   "count": 10278,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "ukrainian-wiktionary",
+   "file": "ukrainian-wiktionary.wordlist",
+   "name": "Ukrainian Wiktionary",
+   "description": "Ukrainian words from Wiktionary",
+   "count": 24131,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "ukrainian-wiktionary-short",
+   "file": "ukrainian-wiktionary-short.wordlist",
+   "name": "Ukrainian Short-Word Wiktionary",
+   "description": "Ukrainian words from Wiktionary",
+   "count": 8935,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "urdu-wiktionary",
+   "file": "urdu-wiktionary.wordlist",
+   "name": "Urdu Wiktionary",
+   "description": "Urdu words from Wiktionary",
+   "count": 5566,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "urdu-wiktionary-short",
+   "file": "urdu-wiktionary-short.wordlist",
+   "name": "Urdu Short-Word Wiktionary",
+   "description": "Urdu words from Wiktionary",
+   "count": 5479,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "ushojo-wiktionary",
+   "file": "ushojo-wiktionary.wordlist",
+   "name": "Ushojo Wiktionary",
+   "description": "Ushojo words from Wiktionary",
+   "count": 2456,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "ushojo-wiktionary-short",
+   "file": "ushojo-wiktionary-short.wordlist",
+   "name": "Ushojo Short-Word Wiktionary",
+   "description": "Ushojo words from Wiktionary",
+   "count": 2318,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "uyghur-wiktionary",
+   "file": "uyghur-wiktionary.wordlist",
+   "name": "Uyghur Wiktionary",
+   "description": "Uyghur words from Wiktionary",
+   "count": 3323,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "uyghur-wiktionary-short",
+   "file": "uyghur-wiktionary-short.wordlist",
+   "name": "Uyghur Short-Word Wiktionary",
+   "description": "Uyghur words from Wiktionary",
+   "count": 2636,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "uzbek-wiktionary",
+   "file": "uzbek-wiktionary.wordlist",
+   "name": "Uzbek Wiktionary",
+   "description": "Uzbek words from Wiktionary",
+   "count": 2942,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "venetan-wiktionary",
+   "file": "venetan-wiktionary.wordlist",
+   "name": "Venetan Wiktionary",
+   "description": "Venetan words from Wiktionary",
+   "count": 2399,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "vietnamese-wiktionary",
+   "file": "vietnamese-wiktionary.wordlist",
+   "name": "Vietnamese Wiktionary",
+   "description": "Vietnamese words from Wiktionary",
+   "count": 9346,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "vietnamese-wiktionary-short",
+   "file": "vietnamese-wiktionary-short.wordlist",
+   "name": "Vietnamese Short-Word Wiktionary",
+   "description": "Vietnamese words from Wiktionary",
+   "count": 9301,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "volapuk-wiktionary",
+   "file": "volapuk-wiktionary.wordlist",
+   "name": "Volapük Wiktionary",
+   "description": "Volapük words from Wiktionary",
+   "count": 2365,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "votic-wiktionary",
+   "file": "votic-wiktionary.wordlist",
+   "name": "Votic Wiktionary",
+   "description": "Votic words from Wiktionary",
+   "count": 2832,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "votic-wiktionary-short",
+   "file": "votic-wiktionary-short.wordlist",
+   "name": "Votic Short-Word Wiktionary",
+   "description": "Votic words from Wiktionary",
+   "count": 2364,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "welsh-wiktionary",
+   "file": "welsh-wiktionary.wordlist",
+   "name": "Welsh Wiktionary",
+   "description": "Welsh words from Wiktionary",
+   "count": 11641,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "welsh-wiktionary-short",
+   "file": "welsh-wiktionary-short.wordlist",
+   "name": "Welsh Short-Word Wiktionary",
+   "description": "Welsh words from Wiktionary",
+   "count": 6882,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "west-circassian-wiktionary",
+   "file": "west-circassian-wiktionary.wordlist",
+   "name": "West Circassian Wiktionary",
+   "description": "West Circassian words from Wiktionary",
+   "count": 4564,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "west-circassian-wiktionary-short",
+   "file": "west-circassian-wiktionary-short.wordlist",
+   "name": "West Circassian Short-Word Wiktionary",
+   "description": "West Circassian words from Wiktionary",
+   "count": 2702,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "xhosa-wiktionary",
+   "file": "xhosa-wiktionary.wordlist",
+   "name": "Xhosa Wiktionary",
+   "description": "Xhosa words from Wiktionary",
+   "count": 2905,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "yakut-wiktionary",
+   "file": "yakut-wiktionary.wordlist",
+   "name": "Yakut Wiktionary",
+   "description": "Yakut words from Wiktionary",
+   "count": 2628,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "yakut-wiktionary-short",
+   "file": "yakut-wiktionary-short.wordlist",
+   "name": "Yakut Short-Word Wiktionary",
+   "description": "Yakut words from Wiktionary",
+   "count": 2131,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "yiddish-wiktionary",
+   "file": "yiddish-wiktionary.wordlist",
+   "name": "Yiddish Wiktionary",
+   "description": "Yiddish words from Wiktionary",
+   "count": 7835,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "yiddish-wiktionary-short",
+   "file": "yiddish-wiktionary-short.wordlist",
+   "name": "Yiddish Short-Word Wiktionary",
+   "description": "Yiddish words from Wiktionary",
+   "count": 4187,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "yoruba-wiktionary",
+   "file": "yoruba-wiktionary.wordlist",
+   "name": "Yoruba Wiktionary",
+   "description": "Yoruba words from Wiktionary",
+   "count": 3062,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "yoruba-wiktionary-short",
+   "file": "yoruba-wiktionary-short.wordlist",
+   "name": "Yoruba Short-Word Wiktionary",
+   "description": "Yoruba words from Wiktionary",
+   "count": 2472,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  },
+  {
+   "id": "zulu-wiktionary",
+   "file": "zulu-wiktionary.wordlist",
+   "name": "Zulu Wiktionary",
+   "description": "Zulu words from Wiktionary",
+   "count": 2504,
+   "license": "CC BY-SA",
+   "source": "wiktionary"
+  }
+ ]
+}

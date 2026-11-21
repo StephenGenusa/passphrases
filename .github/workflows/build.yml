@@ -1,0 +1,159 @@
+name: Build
+
+# Tests the app on Linux, Windows and macOS, then builds the installers for
+# each platform with build.js. Pushing a tag such as v0.2.0 also collects the
+# installers into a draft release.
+#
+# Actions are pinned to a commit, and the two tools downloaded for packaging
+# are pinned to a version and checked against a SHA-256 checksum.
+
+on:
+  push:
+    branches: [master]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+
+      # Ubuntu runners restrict the user namespaces Chromium's sandbox uses.
+      - name: Allow the Chromium sandbox
+        if: runner.os == 'Linux'
+        run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+
+      - name: Test (Linux)
+        if: runner.os == 'Linux'
+        run: xvfb-run -a npm test
+      - name: Test
+        if: runner.os != 'Linux'
+        run: npm test
+
+  package:
+    name: Package (${{ matrix.name }})
+    needs: test
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: linux-x64
+            os: ubuntu-24.04
+            arch: x64
+            appimagetool: appimagetool-x86_64.AppImage
+            appimagetool_sha256: ed4ce84f0d9caff66f50bcca6ff6f35aae54ce8135408b3fa33abfc3cb384eb0
+          - name: linux-arm64
+            os: ubuntu-24.04-arm
+            arch: arm64
+            appimagetool: appimagetool-aarch64.AppImage
+            appimagetool_sha256: f0837e7448a0c1e4e650a93bb3e85802546e60654ef287576f46c71c126a9158
+          - name: win64
+            os: windows-latest
+            arch: x64
+          - name: win-arm64
+            os: windows-latest
+            arch: arm64
+          - name: mac-arm64
+            os: macos-latest
+            arch: arm64
+          - name: mac-x64
+            os: macos-latest
+            arch: x64
+    env:
+      # makes npm fetch Electron for the target architecture, and tells
+      # build.js which one it is packaging
+      npm_config_arch: ${{ matrix.arch }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+
+      - name: Install packaging tools (Linux)
+        if: runner.os == 'Linux'
+        env:
+          APPIMAGETOOL_FILE: ${{ matrix.appimagetool }}
+          APPIMAGETOOL_SHA256: ${{ matrix.appimagetool_sha256 }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends rpm
+          curl -sSfL -o "$RUNNER_TEMP/appimagetool" \
+            "https://github.com/AppImage/appimagetool/releases/download/1.9.1/$APPIMAGETOOL_FILE"
+          echo "$APPIMAGETOOL_SHA256  $RUNNER_TEMP/appimagetool" | sha256sum -c -
+          chmod +x "$RUNNER_TEMP/appimagetool"
+          echo "APPIMAGETOOL=$RUNNER_TEMP/appimagetool" >> "$GITHUB_ENV"
+
+      - name: Install packaging tools (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $tools = Join-Path $env:RUNNER_TEMP 'tools'
+          New-Item -ItemType Directory -Force $tools | Out-Null
+          $rcedit = Join-Path $tools 'rcedit.exe'
+          Invoke-WebRequest 'https://github.com/electron/rcedit/releases/download/v2.0.0/rcedit-x64.exe' -OutFile $rcedit
+          $expected = '3e7801db1a5edbec91b49a24a094aad776cb4515488ea5a4ca2289c400eade2a'
+          if ((Get-FileHash $rcedit -Algorithm SHA256).Hash -ne $expected) { throw 'rcedit checksum mismatch' }
+          $tools | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
+
+          $nsis = 'C:\Program Files (x86)\NSIS'
+          if (-not (Test-Path (Join-Path $nsis 'makensis.exe'))) { choco install nsis -y --no-progress }
+          $nsis | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
+
+      - name: Build and package
+        run: node build.js --package
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: passphrases-${{ matrix.name }}
+          path: dist/*
+          if-no-files-found: error
+
+  release:
+    name: Draft release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: package
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          path: dist
+          merge-multiple: true
+      - name: Checksums
+        run: cd dist && sha256sum * > SHA256SUMS.txt
+      # A draft: nothing is public until you review it and press Publish.
+      - name: Create a draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/* \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "Passphrases ${GITHUB_REF_NAME#v}" \
+            --generate-notes --draft

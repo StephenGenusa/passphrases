@@ -1,0 +1,214 @@
+/* Color styles, chosen on the About tab. Each sets the variables defined in
+   style.css. Palettes: Solarized (Ethan Schoonover), Nord (Arctic Ice Studio),
+   Gruvbox (Pavel Pertsev), Dracula (Zeno Rocha), Zenburn (Jani Nurminen).
+
+   A "low contrast" style is its palette with the passphrase, the hint and the
+   memorize fields drawn at roughly 3:1 against their background instead of
+   5:1 or more: readable at the keyboard, hard to read from across a room. */
+
+/* Solarized Light */
+:root[data-theme="solarized-light"],
+:root[data-theme="solarized-light-low"] {
+  color-scheme: light;
+  --page-bg: #fdf6e3;
+  --nav-bg: #eee8d5;
+  --tab: #93a1a1;
+  --tab-hover: #586e75;
+  --tab-active: #268bd2;
+  --text: #586e75;
+  --muted: #839496;
+  --link: #268bd2;
+  --border: #93a1a1;
+  --field-bg: #fdf6e3;
+  --secret: #586e75;
+  --typo-bg: #f5cfc0;
+  --good: #859900;
+  --progress-bg: #93a1a1;
+  --progress: #859900;
+  --button-top: #268bd2;
+  --button-bottom: #2075b3;
+  --button-hover-top: #2aa198;
+  --button-hover-bottom: #268bd2;
+  --button-text: #fdf6e3;
+  --button-shadow: #586e75;
+}
+:root[data-theme="solarized-light-low"] {
+  --secret: #839496;
+}
+
+/* Solarized Dark */
+:root[data-theme="solarized-dark"],
+:root[data-theme="solarized-dark-low"] {
+  color-scheme: dark;
+  --page-bg: #002b36;
+  --nav-bg: #073642;
+  --tab: #657b83;
+  --tab-hover: #93a1a1;
+  --tab-active: #268bd2;
+  --text: #93a1a1;
+  --muted: #657b83;
+  --link: #2aa198;
+  --border: #586e75;
+  --field-bg: #073642;
+  --secret: #93a1a1;
+  --typo-bg: #5c2a2a;
+  --good: #859900;
+  --progress-bg: #586e75;
+  --progress: #859900;
+  --button-top: #268bd2;
+  --button-bottom: #2075b3;
+  --button-hover-top: #2aa198;
+  --button-hover-bottom: #268bd2;
+  --button-text: #fdf6e3;
+  --button-shadow: #002b36;
+}
+:root[data-theme="solarized-dark-low"] {
+  --secret: #657b83;
+}
+
+/* Nord */
+:root[data-theme="nord"],
+:root[data-theme="nord-low"] {
+  color-scheme: dark;
+  --page-bg: #2e3440;
+  --nav-bg: #242933;
+  --tab: #7b88a1;
+  --tab-hover: #eceff4;
+  --tab-active: #88c0d0;
+  --text: #d8dee9;
+  --muted: #9aa5b8;
+  --link: #88c0d0;
+  --border: #4c566a;
+  --field-bg: #3b4252;
+  --secret: #d8dee9;
+  --typo-bg: #6b3b42;
+  --good: #a3be8c;
+  --progress-bg: #4c566a;
+  --progress: #a3be8c;
+  --button-top: #5e81ac;
+  --button-bottom: #4c6f99;
+  --button-hover-top: #81a1c1;
+  --button-hover-bottom: #5e81ac;
+  --button-text: #eceff4;
+  --button-shadow: #2e3440;
+}
+:root[data-theme="nord-low"] {
+  --secret: #81a1c1;
+}
+
+/* Gruvbox Light */
+:root[data-theme="gruvbox-light"],
+:root[data-theme="gruvbox-light-low"] {
+  color-scheme: light;
+  --page-bg: #fbf1c7;
+  --nav-bg: #ebdbb2;
+  --tab: #7c6f64;
+  --tab-hover: #3c3836;
+  --tab-active: #076678;
+  --text: #3c3836;
+  --muted: #7c6f64;
+  --link: #9d0006;
+  --border: #bdae93;
+  --field-bg: #f9f5d7;
+  --secret: #3c3836;
+  --typo-bg: #f2c0b0;
+  --good: #79740e;
+  --progress-bg: #a89984;
+  --progress: #98971a;
+  --button-top: #458588;
+  --button-bottom: #076678;
+  --button-hover-top: #689d6a;
+  --button-hover-bottom: #458588;
+  --button-text: #fbf1c7;
+  --button-shadow: #3c3836;
+}
+:root[data-theme="gruvbox-light-low"] {
+  --secret: #928374;
+}
+
+/* Gruvbox Dark */
+:root[data-theme="gruvbox-dark"],
+:root[data-theme="gruvbox-dark-low"] {
+  color-scheme: dark;
+  --page-bg: #282828;
+  --nav-bg: #1d2021;
+  --tab: #928374;
+  --tab-hover: #ebdbb2;
+  --tab-active: #fabd2f;
+  --text: #ebdbb2;
+  --muted: #a89984;
+  --link: #83a598;
+  --border: #665c54;
+  --field-bg: #3c3836;
+  --secret: #ebdbb2;
+  --typo-bg: #6b2a26;
+  --good: #b8bb26;
+  --progress-bg: #665c54;
+  --progress: #b8bb26;
+  --button-top: #458588;
+  --button-bottom: #376b6d;
+  --button-hover-top: #689d6a;
+  --button-hover-bottom: #458588;
+  --button-text: #fbf1c7;
+  --button-shadow: #1d2021;
+}
+:root[data-theme="gruvbox-dark-low"] {
+  --secret: #928374;
+}
+
+/* Dracula */
+:root[data-theme="dracula"] {
+  color-scheme: dark;
+  --page-bg: #282a36;
+  --nav-bg: #21222c;
+  --tab: #6272a4;
+  --tab-hover: #f8f8f2;
+  --tab-active: #bd93f9;
+  --text: #f8f8f2;
+  --muted: #a3acc7;
+  --link: #8be9fd;
+  --border: #6272a4;
+  --field-bg: #44475a;
+  --secret: #f8f8f2;
+  --typo-bg: #7a3a45;
+  --good: #50fa7b;
+  --progress-bg: #6272a4;
+  --progress: #50fa7b;
+  --button-top: #7d5fc0;
+  --button-bottom: #6a4fb0;
+  --button-hover-top: #bd93f9;
+  --button-hover-bottom: #7d5fc0;
+  --button-text: #f8f8f2;
+  --button-shadow: #21222c;
+}
+
+/* Zenburn */
+:root[data-theme="zenburn"],
+:root[data-theme="zenburn-low"] {
+  color-scheme: dark;
+  --page-bg: #3f3f3f;
+  --nav-bg: #2b2b2b;
+  --tab: #9f9f8f;
+  --tab-hover: #ffffef;
+  --tab-active: #f0dfaf;
+  --text: #dcdccc;
+  --muted: #a9a999;
+  --link: #8cd0d3;
+  --border: #6f6f6f;
+  --field-bg: #4f4f4f;
+  --secret: #dcdccc;
+  --typo-bg: #6f4747;
+  --good: #8fb28f;
+  --progress-bg: #6f6f6f;
+  --progress: #7f9f7f;
+  --button-top: #5f7f5f;
+  --button-bottom: #4f6f4f;
+  --button-hover-top: #7f9f7f;
+  --button-hover-bottom: #5f7f5f;
+  --button-text: #ffffef;
+  --button-shadow: #2b2b2b;
+}
+:root[data-theme="zenburn-low"] {
+  --field-bg: #3f3f3f;
+  --secret: #7f9f7f;
+}

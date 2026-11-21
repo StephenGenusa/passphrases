@@ -21,23 +21,21 @@
    SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-var fs = require('fs');
-var $ = require('jquery');
+// Shared by the other scripts. The page has no access to Node; what it needs
+// from the system comes through window.passphrasesApp, set up in preload.js.
+var Passphrases = {};
 
-var gui = require('nw.gui');
-var win = gui.Window.get();
+// the passphrase on the Generate tab; empty when there is none
+Passphrases.currentPassphrase = '';
 
-// make shortcut keys like Cmd-Q work in OSX (#4)
-if(process.platform === 'darwin') {
-  var nativeMenuBar = new gui.Menu({ type: "menubar" });
-  nativeMenuBar.createMacBuiltin("Passphrases", {
-    hideEdit: true,
-    hideWindow: true
-  });
-  win.menu = nativeMenuBar;
+// the one element matching a CSS selector
+function el(selector) {
+  return document.querySelector(selector);
 }
-
-Passphrases = {};
+// show or hide it
+function setVisible(selector, visible) {
+  el(selector).hidden = !visible;
+}
 
 // load sound effects
 var soundEffects = {
@@ -47,7 +45,8 @@ var soundEffects = {
 };
 Passphrases.playSound = function(sound) {
   if(Passphrases.prefs['sound']) {
-    soundEffects[sound].play();
+    // play() fails when there is no audio device; that is not an error here
+    soundEffects[sound].play().catch(function(){});
   }
 }
 
@@ -60,7 +59,7 @@ Passphrases.notify = function(message) {
 
   var notification = new Notification("Passphrases", options);
   notification.onclick = function () {
-    win.focus();
+    window.passphrasesApp.focusWindow();
   }
   notification.onshow = function () {
     // auto close after 3 seconds
@@ -68,61 +67,16 @@ Passphrases.notify = function(message) {
   }
 }
 
-// define default preferences
+// default preferences, replaced by the saved ones once they are read
 Passphrases.prefs = {
   sound: true,
-  wordlist: "securedrop",
-  words: 7
+  theme: 'classic'
 };
-
-function getPrefsDirname() {
-  var dirname;
-  if(process.platform == 'linux') {
-    dirname = process.env.HOME + '/.config/PassphrasesApp'
-  } else if(process.platform == 'darwin') {
-    dirname = process.env.HOME + '/Library/Application Support/PassphrasesApp'
-  } else if(process.platform == 'win32') {
-    dirname = process.env.APPDATA + '\\\\PassphrasesApp'
-  }
-  return dirname;
-}
-function getPrefsFilename() {
-  if(process.platform == 'win32') {
-    return getPrefsDirname() + '\\\\passphrases.conf';
-  } else {
-    return getPrefsDirname() + '/passphrases.conf';
-  }
+Passphrases.savePrefs = function() {
+  return window.passphrasesApp.savePrefs(Passphrases.prefs);
 }
 
-function loadPrefs(callback) {
-  try {
-    data = fs.readFileSync(getPrefsFilename(), { encoding: 'utf8' });
-    Passphrases.prefs = JSON.parse(data);
-    callback();
-  } catch(e) {
-    Passphrases.savePrefs(callback);
-  }
-}
-Passphrases.savePrefs = function(callback) {
-  // create the prefs dir, if it's not already created
-  try {
-    fs.mkdirSync(getPrefsDirname());
-  } catch(e) {}
-
-  // save preferences
-  fs.writeFile(getPrefsFilename(), JSON.stringify(Passphrases.prefs), function(err){
-    if(callback) callback(err);
-  })
-}
-loadPrefs();
-
-$(function(){
-  // make all links open in external browser
-  $('a').each(function(){
-    var url = $(this).attr('href');
-    $(this).click(function(){
-      gui.Shell.openExternal(url);
-      return false;
-    });
-  });
+// resolves when the saved preferences have been read
+Passphrases.ready = window.passphrasesApp.loadPrefs().then(function(prefs){
+  Passphrases.prefs = prefs;
 });

@@ -21,79 +21,35 @@
    SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-var $ = require('jquery');
+document.addEventListener('DOMContentLoaded', function(){
+  var tabs = ['generate', 'memorize', 'about'];
 
-$(function(){
-  // tab functions
-  function activateGenerate() {
-    $('.tab-generate').addClass('active');
-    $('.content-generate').addClass('active');
-  }
-  function deactivateGenerate() {
-    $('.tab-generate').removeClass('active');
-    $('.content-generate').removeClass('active');
-  }
-  function activateMemorize() {
-    $('.tab-memorize').addClass('active');
-    $('.content-memorize').addClass('active');
-  }
-  function deactivateMemorize() {
-    $('.tab-memorize').removeClass('active');
-    $('.content-memorize').removeClass('active');
-  }
-  function activateAbout() {
-    $('.tab-about').addClass('active');
-    $('.content-about').addClass('active');
-  }
-  function deactivateAbout() {
-    $('.tab-about').removeClass('active');
-    $('.content-about').removeClass('active');
-  }
+  function showTab(name) {
+    tabs.forEach(function(tab){
+      el('.tab-' + tab).classList.toggle('active', tab == name);
+      el('.content-' + tab).classList.toggle('active', tab == name);
+    });
 
-  function clickGenerateTab() {
-    if(!$('.tab-generate').hasClass('active')) {
-      activateGenerate();
-      deactivateMemorize();
-      deactivateAbout();
-    };
-  }
-  $('.tab-generate').click(clickGenerateTab);
-
-  function clickMemorizeTab() {
-    if(!$('.tab-memorize').hasClass('active')) {
-      activateMemorize();
-      deactivateGenerate();
-      deactivateAbout();
-
-      if($('.memorize-input').is(':visible')) {
-        $('.passphrase-to-memorize').focus();
+    if(name == 'memorize') {
+      if(!el('.memorize-input').hidden) {
+        el('.passphrase-to-memorize').focus();
       } else {
-        $('.passphrase-test').focus();
+        el('.passphrase-test').focus();
       }
-    };
+    }
   }
-  $('.tab-memorize').click(clickMemorizeTab);
 
-  function clickAboutTab() {
-    if(!$('.tab-about').hasClass('active')) {
-      activateAbout();
-      deactivateGenerate();
-      deactivateMemorize();
-    };
-  }
-  $('.tab-about').click(clickAboutTab);
-
-  $('.navigation .tab').hover(function(){
-    $(this).addClass('hover');
-  }, function(){
-    $(this).removeClass('hover');
+  tabs.forEach(function(tab){
+    el('.tab-' + tab).addEventListener('click', function(){
+      if(!this.classList.contains('active')) showTab(tab);
+    });
   });
 
   // let the outside world switch to memorize tab
   Passphrases.tabMemorize = function(){
-    clickMemorizeTab();
+    showTab('memorize');
   };
 
   // start with generate
-  clickGenerateTab();
+  showTab('generate');
 });

@@ -23,232 +23,321 @@
    SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-var fs = require('fs-extra');
-var path = require('path');
-var child_process = require('child_process');
-var NwBuilder = require('node-webkit-builder');
+'use strict';
 
-// are we building a package to distribute?
-var buildPackage = (process.argv[2] == '--package');
-if(buildPackage) {
-  process.umask(0022);
+// Builds Passphrases for the platform this is run on, with no build
+// dependencies beyond Node and the Electron already in node_modules:
+//
+//   node build.js             the app, in build/
+//   node build.js --package   also installers and archives, in dist/
+//
+// The app is Electron's own distribution with src/ placed in resources/app.
+// Packaging uses the platform's tools, and a missing tool skips that package:
+//
+//   Linux    tar, dpkg-deb, rpmbuild, appimagetool
+//   macOS    ditto, codesign, hdiutil
+//   Windows  tar, makensis, rcedit (sets the icon of Passphrases.exe)
+//
+// The architecture is that of the installed Electron. To build for another
+// one, install Electron for it first: npm_config_arch=arm64 npm ci
 
-  // clean up from last time
-  try {
-    fs.removeSync('./dist');
-    fs.mkdirSync('./dist');
-  } catch(e) {}
+const fs = require('fs');
+const path = require('path');
+const child_process = require('child_process');
+
+const ROOT = __dirname;
+const BUILD = path.join(ROOT, 'build');
+const DIST = path.join(ROOT, 'dist');
+const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
+const version = pkg.version;
+const makePackages = process.argv.includes('--package');
+// npm_config_arch is what made npm fetch Electron for another architecture
+const arch = process.env.npm_config_arch || process.arch;
+
+function run(command, args, options) {
+  console.log('  ' + command + ' ' + args.join(' '));
+  child_process.execFileSync(command, args, Object.assign({ stdio: 'inherit' }, options));
 }
 
-// learn version of app
-var version = JSON.parse(fs.readFileSync('./src/package.json'))['version'];
-
-function build(options, callback) {
-  var nw = new NwBuilder(options);
-
-  nw.on('log',  console.log);
-  nw.build().then(function () {
-    callback();
-  }).catch(function(err) {
-    console.log('');
-    console.log('Build complete.');
-    console.log('');
-    callback(err);
-  });
+function have(command) {
+  const finder = process.platform === 'win32' ? 'where' : 'which';
+  return child_process.spawnSync(finder, [command], { stdio: 'ignore' }).status === 0;
 }
 
-// options for all platforms
-var options = { files: './src/**' }
+function fillTemplate(source, destination, values) {
+  let text = fs.readFileSync(source, 'utf8');
+  for (const key of Object.keys(values)) {
+    text = text.split('{{' + key + '}}').join(values[key]);
+  }
+  fs.writeFileSync(destination, text);
+}
 
-// Linux
-if(process.platform == 'linux') {
-  options.platforms = ['linux32', 'linux64'];
+// Where the installed Electron keeps its distribution, and the resources
+// directory inside a copy of it.
+function electronDist() {
+  const binary = require('electron');  // in Node this is the path to the binary
+  if (process.platform === 'darwin') {
+    // .../dist/Electron.app/Contents/MacOS/Electron
+    return path.resolve(binary, '..', '..', '..', '..');
+  }
+  return path.dirname(binary);
+}
 
-  build(options, function(err){
-    if(err) throw err;
-    if(buildPackage) {
-      console.log('Note that there is no simple way to build source packages yet.');
+// Put the app into an Electron resources directory.
+function installApp(resources) {
+  fs.rmSync(path.join(resources, 'default_app.asar'), { force: true });
+  const appDir = path.join(resources, 'app');
+  fs.cpSync(path.join(ROOT, 'src'), appDir, { recursive: true });
+  fs.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify({
+    name: pkg.name,
+    productName: pkg.productName,
+    version: version,
+    description: pkg.description,
+    license: pkg.license,
+    main: 'main.js'
+  }, null, 2) + '\n');
+  fs.copyFileSync(path.join(ROOT, 'LICENSE.md'), path.join(appDir, 'LICENSE.md'));
+}
 
-      function copyBinaryPackageSync(pkgName, arch) {
-        try {
-          // create directory structure
-          fs.mkdirsSync('./dist/' + pkgName + '/opt');
-          fs.mkdirsSync('./dist/' + pkgName + '/usr/bin');
-          fs.mkdirsSync('./dist/' + pkgName + '/usr/share/pixmaps');
-          fs.mkdirsSync('./dist/' + pkgName + '/usr/share/applications');
+function dirSizeKb(dir) {
+  let bytes = 0;
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) bytes += dirSizeKb(full) * 1024;
+    else if (entry.isFile()) bytes += fs.statSync(full).size;
+  }
+  return Math.ceil(bytes / 1024);
+}
 
-          // copy binaries
-          fs.copySync('./build/Passphrases/' + arch, './dist/' + pkgName + '/opt/Passphrases');
+// Give a tree the permissions an installed system expects, whatever the
+// umask was when it was copied: 755 for directories and programs, 644 for the
+// rest.
+function normalizeModes(dir) {
+  fs.chmodSync(dir, 0o755);
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) normalizeModes(full);
+    else if (entry.isFile()) fs.chmodSync(full, fs.statSync(full).mode & 0o100 ? 0o755 : 0o644);
+  }
+}
 
-          // copy icon, .desktop
-          fs.copySync('./packaging/passphrases.png', './dist/' + pkgName + '/usr/share/pixmaps/passphrases.png');
-          fs.copySync('./packaging/passphrases.desktop', './dist/' + pkgName + '/usr/share/applications/passphrases.desktop');
+// -------------------------------------------------------------------- Linux
 
-          // create passphrases symlink
-          fs.symlinkSync('../../opt/Passphrases/Passphrases', './dist/' + pkgName + '/usr/bin/passphrases');
-        } catch(e) { throw e; }
-      }
+function buildLinux() {
+  const appDir = path.join(BUILD, 'Passphrases-linux-' + arch);
+  console.log('Building ' + appDir);
+  fs.rmSync(appDir, { recursive: true, force: true });
+  fs.cpSync(electronDist(), appDir, { recursive: true });
+  fs.renameSync(path.join(appDir, 'electron'), path.join(appDir, 'passphrases'));
+  installApp(path.join(appDir, 'resources'));
+  if (!makePackages) return;
 
-      function copyAndReplace(src_filename, dest_filename, arch, replaceArch) {
-        var text = fs.readFileSync(src_filename, { encoding: 'utf8' });
-        text = text.replace('{{version}}', version);
-        if(arch == 'linux32') text = text.replace('{{arch}}', replaceArch);
-        if(arch == 'linux64') text = text.replace('{{arch}}', replaceArch);
-        fs.writeFileSync(dest_filename, text);
-      }
-
-      // can we make debian packages?
-      child_process.exec('which dpkg-deb', function(err, stdout, stderr){
-        if(err || stdout == '') {
-          console.log('Cannot find dpkg-deb, skipping building Debian package');
-          return;
-        }
-
-        // building two .deb packages, for linux32 and linux64
-        ['linux32', 'linux64'].forEach(function(arch){
-          if(!arch) return;
-
-          var debArch;
-          if(arch == 'linux32') debArch = 'i386';
-          if(arch == 'linux64') debArch = 'amd64';
-
-          var pkgName = 'passphrases_' + version + '-1_{{arch}}';
-          pkgName = pkgName.replace('{{arch}}', debArch);
-
-          copyBinaryPackageSync(pkgName, arch);
-
-          // write the debian control file
-          fs.mkdirsSync('./dist/' + pkgName + '/DEBIAN');
-          copyAndReplace('./packaging/DEBIAN/control', './dist/' + pkgName + '/DEBIAN/control', arch, debArch);
-
-          // build .deb packages
-          console.log('Building ' + pkgName + '.deb');
-          child_process.exec('dpkg-deb --build ' + pkgName, { cwd: './dist' }, function(err, stdout, stderr){
-            if(err) throw err;
-          });
-        });
-      });
-
-      // can we make rpm packages?
-      child_process.exec('which rpmbuild', function(err, stdout, stderr){
-        if(err || stdout == '') {
-          console.log('Cannot find rpmbuild, skipping building Red Hat package');
-          return;
-        }
-
-        // building two .rpm packages, for linux32 and linux64
-        ['linux32', 'linux64'].forEach(function(arch){
-          if(!arch) return;
-
-          // following instructions from:
-          // https://stackoverflow.com/questions/880227/what-is-the-minimum-i-have-to-do-to-create-an-rpm-file
-
-          var rpmArch;
-          if(arch == 'linux32') rpmArch = 'i686';
-          if(arch == 'linux64') rpmArch = 'x86_64';
-
-          fs.mkdirsSync('./dist/' + rpmArch + '/RPMS');
-          fs.mkdirsSync('./dist/' + rpmArch + '/SRPMS');
-          fs.mkdirsSync('./dist/' + rpmArch + '/BUILD');
-          fs.mkdirsSync('./dist/' + rpmArch + '/SOURCES');
-          fs.mkdirsSync('./dist/' + rpmArch + '/SPECS');
-          fs.mkdirsSync('./dist/' + rpmArch + '/tmp');
-
-          var pkgName = 'passphrases-' + version;
-
-          copyBinaryPackageSync(rpmArch + '/' + pkgName, arch);
-
-          // write the spec file
-          copyAndReplace('./packaging/SPECS/passphrases.spec', './dist/' + rpmArch + '/SPECS/passphrases.spec', arch, rpmArch);
-
-          // tarball the source
-          console.log('Compressing binary for ' + arch);
-          child_process.exec('tar -zcf SOURCES/' + pkgName + '.tar.gz ' + pkgName + '/', { cwd: './dist/' + rpmArch }, function(err, stdout, stderr){
-            if(err) {
-              console.log('Error after compressing - ' + arch, err);
-              return;
-            }
-
-            console.log('Building ' + pkgName + '.rpm (' + arch + ')');
-            var topDir = path.resolve('./dist/' + rpmArch);
-            child_process.exec('rpmbuild --define \'_topdir ' + topDir +'\' -ba dist/' + rpmArch + '/SPECS/passphrases.spec', function(err, stdout, stderr){
-              if(err) {
-                console.log('Error after rpmbuild - ' + arch, err);
-                return;
-              }
-
-            });
-          });
-        });
-
-      });
+  // The files of an installed system, shared by the .deb and the .rpm.
+  function stage(root) {
+    fs.mkdirSync(path.join(root, 'opt'), { recursive: true });
+    fs.cpSync(appDir, path.join(root, 'opt', 'Passphrases'), { recursive: true });
+    fs.mkdirSync(path.join(root, 'usr', 'bin'), { recursive: true });
+    fs.symlinkSync('../../opt/Passphrases/passphrases', path.join(root, 'usr', 'bin', 'passphrases'));
+    const applications = path.join(root, 'usr', 'share', 'applications');
+    fs.mkdirSync(applications, { recursive: true });
+    fs.copyFileSync(path.join(ROOT, 'packaging', 'passphrases.desktop'),
+      path.join(applications, 'passphrases.desktop'));
+    for (const size of ['64', '256', '512']) {
+      const icons = path.join(root, 'usr', 'share', 'icons', 'hicolor', size + 'x' + size, 'apps');
+      fs.mkdirSync(icons, { recursive: true });
+      fs.copyFileSync(path.join(ROOT, 'packaging', 'passphrases-' + size + '.png'),
+        path.join(icons, 'passphrases.png'));
     }
-  });
-}
+    normalizeModes(root);
+    // Chromium's sandbox helper must be setuid root where user namespaces
+    // are not available; the package tools record root as the owner.
+    fs.chmodSync(path.join(root, 'opt', 'Passphrases', 'chrome-sandbox'), 0o4755);
+  }
 
-// OSX
-else if(process.platform == 'darwin') {
-  options.platforms = ['osx32'];
-  options.macIcns = './packaging/icon.icns';
+  // archive
+  const archive = 'Passphrases-' + version + '-linux-' + arch + '.tar.gz';
+  console.log('Packaging ' + archive);
+  run('tar', ['-czf', path.join(DIST, archive), '-C', BUILD, path.basename(appDir)]);
 
-  build(options, function(err){
-    if(err) throw err;
-    if(buildPackage) {
-      // copy .app folder
-      fs.copySync('./build/Passphrases/osx32/Passphrases.app', './dist/Passphrases.app');
+  // .deb
+  if (have('dpkg-deb')) {
+    const debArch = { x64: 'amd64', arm64: 'arm64' }[arch] || arch;
+    const name = 'passphrases_' + version + '-1_' + debArch;
+    console.log('Packaging ' + name + '.deb');
+    const root = path.join(DIST, name);
+    stage(root);
+    fs.mkdirSync(path.join(root, 'DEBIAN'));
+    fillTemplate(path.join(ROOT, 'packaging', 'DEBIAN', 'control'),
+      path.join(root, 'DEBIAN', 'control'),
+      { version: version, arch: debArch, size: String(dirSizeKb(root)) });
+    run('dpkg-deb', ['--root-owner-group', '--build', root, path.join(DIST, name + '.deb')]);
+    fs.rmSync(root, { recursive: true, force: true });
+  } else {
+    console.log('Cannot find dpkg-deb, skipping the Debian package');
+  }
 
-      // codesigning
-      console.log('Codesigning');
-      var signingIdentityApp = '3rd Party Mac Developer Application: Micah Lee';
-      var signingIdentityInstaller = 'Developer ID Installer: Micah Lee';
-      child_process.exec('codesign --force --deep --verify --verbose --sign "' + signingIdentityApp + '" Passphrases.app', { cwd: './dist' }, function(err, stdout, stderr){
-        if(err) {
-          console.log('Error during codesigning', err);
-          return;
-        }
+  // AppImage
+  const appimagetool = process.env.APPIMAGETOOL || (have('appimagetool') ? 'appimagetool' : null);
+  if (appimagetool) {
+    const imageArch = { x64: 'x86_64', arm64: 'aarch64' }[arch] || arch;
+    const name = 'Passphrases-' + version + '-' + imageArch + '.AppImage';
+    console.log('Packaging ' + name);
+    const appImageDir = path.join(DIST, 'Passphrases.AppDir');
+    fs.cpSync(appDir, appImageDir, { recursive: true });
+    normalizeModes(appImageDir);
+    fs.writeFileSync(path.join(appImageDir, 'AppRun'),
+      '#!/bin/sh\nexec "$(dirname "$(readlink -f "$0")")/passphrases" "$@"\n', { mode: 0o755 });
+    fs.writeFileSync(path.join(appImageDir, 'passphrases.desktop'),
+      fs.readFileSync(path.join(ROOT, 'packaging', 'passphrases.desktop'), 'utf8')
+        .replace('Exec=/usr/bin/passphrases', 'Exec=passphrases'));
+    fs.copyFileSync(path.join(ROOT, 'packaging', 'passphrases-256.png'),
+      path.join(appImageDir, 'passphrases.png'));
+    fs.copyFileSync(path.join(ROOT, 'packaging', 'passphrases-256.png'),
+      path.join(appImageDir, '.DirIcon'));
+    // APPIMAGE_EXTRACT_AND_RUN lets appimagetool, itself an AppImage, run
+    // where FUSE is not available
+    run(appimagetool, [appImageDir, path.join(DIST, name)],
+      { env: Object.assign({}, process.env, { ARCH: imageArch, APPIMAGE_EXTRACT_AND_RUN: '1' }) });
+    fs.rmSync(appImageDir, { recursive: true, force: true });
+  } else {
+    console.log('Cannot find appimagetool, skipping the AppImage');
+  }
 
-        // build a package
-        child_process.exec('productbuild --component Passphrases.app /Applications Passphrases.pkg --sign "' + signingIdentityInstaller + '"', { cwd: './dist' }, function(err, stdout, stderr){
-          if(err) {
-            console.log('Error during productbuild', err);
-            return;
-          }
-          console.log('All done');
-        });
-
-      });
+  // .rpm
+  if (have('rpmbuild')) {
+    const rpmArch = { x64: 'x86_64', arm64: 'aarch64' }[arch] || arch;
+    console.log('Packaging passphrases-' + version + ' rpm');
+    const top = path.join(DIST, 'rpmbuild');
+    const sourceName = 'passphrases-' + version;
+    for (const dir of ['BUILD', 'RPMS', 'SOURCES', 'SPECS', 'SRPMS']) {
+      fs.mkdirSync(path.join(top, dir), { recursive: true });
     }
-  });
-}
-
-// Windows
-else if(process.platform == 'win32') {
-  options.platforms = ['win32'];
-  options.winIco = './packaging/icon.ico';
-
-  build(options, function(err){
-    if(err) throw err;
-    if(buildPackage) {
-      // copy binaries
-      fs.copySync('./build/passphrases/win32', './dist/Passphrases');
-
-      // copy license
-      fs.copySync('./LICENSE.md', './dist/Passphrases/LICENSE.md');
-
-      // codesign Passphrases.exe
-      child_process.execSync('signtool.exe sign /v /d "Passphrases" /a /tr "http://www.startssl.com/timestamp" .\\dist\\Passphrases\\Passphrases.exe');
-
-      // make the installer
-      child_process.execSync('makensisw packaging\\windows_installer.nsi');
-
-      // codesign the installer
-      child_process.execSync('signtool.exe sign /v /d "Passphrases" /a /tr "http://www.startssl.com/timestamp" .\\dist\\Passphrases_Setup.exe');
+    stage(path.join(top, sourceName));
+    run('tar', ['-czf', path.join(top, 'SOURCES', sourceName + '.tar.gz'), '-C', top, sourceName]);
+    fillTemplate(path.join(ROOT, 'packaging', 'SPECS', 'passphrases.spec'),
+      path.join(top, 'SPECS', 'passphrases.spec'), { version: version, arch: rpmArch });
+    run('rpmbuild', ['--define', '_topdir ' + top, '-bb', path.join(top, 'SPECS', 'passphrases.spec')]);
+    for (const file of fs.readdirSync(path.join(top, 'RPMS', rpmArch))) {
+      fs.copyFileSync(path.join(top, 'RPMS', rpmArch, file), path.join(DIST, file));
     }
-  });
+    fs.rmSync(top, { recursive: true, force: true });
+  } else {
+    console.log('Cannot find rpmbuild, skipping the Red Hat package');
+  }
 }
 
-// unsupported platform
-else {
-  console.log('Error: unrecognized platform');
-  process.exit();
+// -------------------------------------------------------------------- macOS
+
+function buildMac() {
+  const outDir = path.join(BUILD, 'Passphrases-darwin-' + arch);
+  const appBundle = path.join(outDir, 'Passphrases.app');
+  console.log('Building ' + appBundle);
+  fs.rmSync(outDir, { recursive: true, force: true });
+  fs.mkdirSync(outDir, { recursive: true });
+  // ditto keeps the symlinks inside the frameworks intact
+  run('ditto', [path.join(electronDist(), 'Electron.app'), appBundle]);
+
+  const contents = path.join(appBundle, 'Contents');
+  installApp(path.join(contents, 'Resources'));
+  fs.copyFileSync(path.join(ROOT, 'packaging', 'icon.icns'),
+    path.join(contents, 'Resources', 'electron.icns'));
+
+  // plutil adds a key or replaces it
+  const plist = path.join(contents, 'Info.plist');
+  const set = (key, value) => run('plutil', ['-replace', key, '-string', value, plist]);
+  set('CFBundleName', 'Passphrases');
+  set('CFBundleDisplayName', 'Passphrases');
+  set('CFBundleIdentifier', 'com.passphrases.app');
+  set('CFBundleShortVersionString', version);
+  set('CFBundleVersion', version);
+
+  // Changing the bundle breaks Electron's own signature, and Apple silicon
+  // refuses to run code whose signature is broken. An ad-hoc signature ("-")
+  // needs no certificate and makes the app runnable. It is not a Developer ID
+  // signature: Gatekeeper still warns about apps downloaded from the
+  // Internet until the app is signed and notarized; see BUILD.md.
+  run('codesign', ['--force', '--deep', '--sign', '-', appBundle]);
+
+  if (!makePackages) return;
+
+  const base = 'Passphrases-' + version + '-mac-' + arch;
+  console.log('Packaging ' + base + '.zip');
+  run('ditto', ['-c', '-k', '--keepParent', appBundle, path.join(DIST, base + '.zip')]);
+  console.log('Packaging ' + base + '.dmg');
+  run('hdiutil', ['create', '-volname', 'Passphrases', '-srcfolder', outDir,
+    '-ov', '-format', 'UDZO', path.join(DIST, base + '.dmg')]);
 }
+
+// ------------------------------------------------------------------ Windows
+
+function buildWindows() {
+  const appDir = path.join(BUILD, 'Passphrases-win32-' + arch);
+  console.log('Building ' + appDir);
+  fs.rmSync(appDir, { recursive: true, force: true });
+  fs.cpSync(electronDist(), appDir, { recursive: true });
+  fs.renameSync(path.join(appDir, 'electron.exe'), path.join(appDir, 'Passphrases.exe'));
+  installApp(path.join(appDir, 'resources'));
+  fs.copyFileSync(path.join(ROOT, 'packaging', 'icon.ico'), path.join(appDir, 'icon.ico'));
+
+  // rcedit rewrites the icon and version details stored inside the .exe
+  const exe = path.join(appDir, 'Passphrases.exe');
+  if (have('rcedit')) {
+    run('rcedit', [exe,
+      '--set-icon', path.join(ROOT, 'packaging', 'icon.ico'),
+      '--set-file-version', version,
+      '--set-product-version', version,
+      '--set-version-string', 'ProductName', 'Passphrases',
+      '--set-version-string', 'FileDescription', 'Passphrases',
+      '--set-version-string', 'CompanyName', 'Passphrases',
+      '--set-version-string', 'LegalCopyright', 'MIT license',
+      '--set-version-string', 'OriginalFilename', 'Passphrases.exe']);
+  } else {
+    console.log('Cannot find rcedit, Passphrases.exe keeps the Electron icon');
+  }
+
+  if (!makePackages) return;
+
+  // Electron no longer ships a 32-bit Windows build, so there is no win32
+  const label = { x64: 'win64' }[arch] || 'win-' + arch;
+  const base = 'Passphrases-' + version + '-' + label;
+
+  // portable copy: unzip and run
+  console.log('Packaging ' + base + '.zip');
+  // Windows' own tar writes zip files; the tar that comes with Git does not
+  run(path.join(process.env.SystemRoot || 'C:\\Windows', 'System32', 'tar.exe'),
+    ['-a', '-c', '-f', path.join(DIST, base + '.zip'), '-C', BUILD, path.basename(appDir)]);
+
+  // Neither Passphrases.exe nor the installer is signed here; see BUILD.md.
+  if (have('makensis')) {
+    console.log('Packaging ' + base + '-Setup.exe');
+    run('makensis', [
+      '/DVERSION=' + version,
+      '/DBINPATH=' + appDir,
+      '/DOUTFILE=' + path.join(DIST, base + '-Setup.exe'),
+      '/DINSTALLSIZE=' + dirSizeKb(appDir),
+      path.join(ROOT, 'packaging', 'windows_installer.nsi')
+    ]);
+  } else {
+    console.log('Cannot find makensis, skipping the installer');
+  }
+}
+
+// --------------------------------------------------------------------- main
+
+fs.mkdirSync(BUILD, { recursive: true });
+if (makePackages) {
+  fs.rmSync(DIST, { recursive: true, force: true });
+  fs.mkdirSync(DIST, { recursive: true });
+}
+
+if (process.platform === 'linux') {
+  buildLinux();
+} else if (process.platform === 'darwin') {
+  buildMac();
+} else if (process.platform === 'win32') {
+  buildWindows();
+} else {
+  console.error('Error: unrecognized platform ' + process.platform);
+  process.exit(1);
+}
+console.log('Done.');

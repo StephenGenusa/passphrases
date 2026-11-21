@@ -1,21 +1,22 @@
 Name:		passphrases
 Version:	{{version}}
 Release:	1%{?dist}
-Summary:	Passphrases is a tool that helps you generate high-entropy passphrases and memorize them using spaced repition.
+Summary:	Generate and memorize high-entropy passphrases
 
 Group:		Applications/Productivity
 License:	MIT
-URL:		https://github.com/micahflee/passphrases
+URL:		https://github.com/StephenGenusa/passphrases
 Source0:	%{name}-%{version}.tar.gz
+BuildArch:	{{arch}}
 
-#BuildRequires:	nodejs
-#Requires:	      nodejs
-
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
-
+# the files are a prebuilt Electron application
+AutoReqProv:	no
+%global debug_package %{nil}
+%global __strip /bin/true
 
 %description
-Passphrases is a tool that helps you generate high-entropy passphrases and memorize them using spaced repition.
+Passphrases is a tool that helps you generate high-entropy passphrases and
+memorize them using spaced repetition.
 
 
 %prep
@@ -28,28 +29,24 @@ Passphrases is a tool that helps you generate high-entropy passphrases and memor
 
 %install
 rm -rf %{buildroot}
-mkdir -p  %{buildroot}
-
-# in builddir
+mkdir -p %{buildroot}
 cp -a * %{buildroot}
-
-
-%clean
-rm -rf %{buildroot}
 
 
 %files
 %defattr(-,root,root,-)
-/opt/Passphrases/Passphrases
-/opt/Passphrases/icudtl.dat
-/opt/Passphrases/libffmpegsumo.so
-/opt/Passphrases/nw.pak
+/opt/Passphrases
+%attr(4755,root,root) /opt/Passphrases/chrome-sandbox
 /usr/bin/passphrases
 /usr/share/applications/passphrases.desktop
-/usr/share/pixmaps/passphrases.png
+/usr/share/icons/hicolor/64x64/apps/passphrases.png
+/usr/share/icons/hicolor/256x256/apps/passphrases.png
+/usr/share/icons/hicolor/512x512/apps/passphrases.png
 
 
 %changelog
+* Sat Nov 21 2026 Stephen Genusa <github@genusa.com> 0.2.0
+- Moved to Electron; new wordlists
+
 * Sun Mar 15 2015 Micah Lee <micah@micahflee.com> 0.1.0
 - First build
-

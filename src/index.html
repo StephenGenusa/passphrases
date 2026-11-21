@@ -25,8 +25,11 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -->
 <html>
   <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; media-src 'self'">
     <title>Passphrases</title>
     <link href="css/style.css" rel="stylesheet" type="text/css">
+    <link href="css/themes.css" rel="stylesheet" type="text/css">
     <link href="fonts/Open_Sans/opensans.css" rel="stylesheet" type="text/css">
 
     <script src="js/common.js"></script>
@@ -48,17 +51,22 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
         <!-- generate -->
         <div class="content content-generate">
-          <div class="generate-options">
-            <select class="wordlists"></select><br/>
-            <select class="words"></select>
-            <select class="separator"></select><br>
-            <label><input type="checkbox" id="use-upcase" class="use-upcase" name="use-upcase">Use Uppercase</label>
+          <div class="generate-top">
+            <div class="generate-options">
+              <input type="text" class="wordlists" list="wordlists-options" title="Type to find a word list" autocomplete="off" spellcheck="false">
+              <datalist id="wordlists-options"></datalist>
+              <select class="words"></select>
+              <select class="separator"></select>
+              <label class="max-length-label" title="The longest passphrase to generate, in characters">Maximum length <input type="number" class="max-length" min="8" max="999" step="1" value="96"></label>
+              <label><input type="checkbox" id="use-upcase" class="use-upcase" name="use-upcase" checked> Use Uppercase</label>
+            </div>
+            <p class="wordlist-description"></p>
           </div>
-          <p class="wordlist-description"></p>
 
           <div class="passphrase-wrapper">
             <div class="passphrase"></div>
           </div>
+          <div class="passphrase-length"></div>
 
           <div class="buttons">
             <div class="btn button-generate">Generate</div>
@@ -122,14 +130,15 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
         <!-- about -->
         <div class="content content-about">
-          <p><strong>Passphrases</strong> is a tool that helps you generate <a href="https://firstlook.org/theintercept/2015/03/26/passphrases-can-memorize-attackers-cant-guess/">high-entropy passphrases</a> and memorize them using a technique called spaced repetition.</p>
+          <p><strong>Passphrases</strong> is a tool that helps you generate <a href="https://theintercept.com/2015/03/26/passphrases-can-memorize-attackers-cant-guess/">high-entropy passphrases</a> and memorize them using a technique called spaced repetition.</p>
 
-          <form>
+          <form class="about-settings">
             <label for="enable-sound"><input type="checkbox" id="enable-sound" class="enable-sound" name="enable-sound"> Enable sound</label>
+            <label for="color-style">Color style <select id="color-style" class="color-style" name="color-style"></select></label>
           </form>
 
           <p class="about-license">
-            Passphrases is open source software, released under the MIT license | <a href="https://github.com/micahflee/passphrases">source code</a><br/>
+            Passphrases is open source software, released under the MIT license | <a href="https://github.com/StephenGenusa/passphrases">source code</a><br/>
             Passphrases does not collect any information or do anything over the Internet
           </p>
         </div>

@@ -21,15 +21,57 @@
    SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-var $ = require('jquery');
+// color styles, defined in css/themes.css; "classic" is the stylesheet default
+var colorStyles = [
+  { id: 'classic', name: 'Classic' },
+  { id: 'solarized-light', name: 'Solarized Light' },
+  { id: 'solarized-dark', name: 'Solarized Dark' },
+  { id: 'nord', name: 'Nord' },
+  { id: 'gruvbox-light', name: 'Gruvbox Light' },
+  { id: 'gruvbox-dark', name: 'Gruvbox Dark' },
+  { id: 'dracula', name: 'Dracula' },
+  { id: 'zenburn', name: 'Zenburn' },
+  { id: 'solarized-light-low', name: 'Solarized Light (low contrast)' },
+  { id: 'solarized-dark-low', name: 'Solarized Dark (low contrast)' },
+  { id: 'nord-low', name: 'Nord (low contrast)' },
+  { id: 'gruvbox-light-low', name: 'Gruvbox Light (low contrast)' },
+  { id: 'gruvbox-dark-low', name: 'Gruvbox Dark (low contrast)' },
+  { id: 'zenburn-low', name: 'Zenburn (low contrast)' }
+];
 
-$(function(){
-  // check the box if sound is enabled
-  $('.enable-sound').prop('checked', Passphrases.prefs['sound']);
+function applyColorStyle(id) {
+  document.documentElement.setAttribute('data-theme', id);
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+  var sound = el('.enable-sound'),
+    colorStyle = el('.color-style');
+
+  colorStyles.forEach(function(style){
+    colorStyle.add(new Option(style.name, style.id));
+  });
+
+  Passphrases.ready.then(function(){
+    // check the box if sound is enabled
+    sound.checked = Passphrases.prefs['sound'];
+
+    // show the saved color style, or classic if it is not one we know
+    var known = colorStyles.some(function(style){ return style.id == Passphrases.prefs['theme']; });
+    var theme = known ? Passphrases.prefs['theme'] : 'classic';
+    colorStyle.value = theme;
+    applyColorStyle(theme);
+  });
 
   // toggling sound updates settings
-  $('.enable-sound').change(function(){
-    Passphrases.prefs['sound'] = $(this).prop('checked');
+  sound.addEventListener('change', function(){
+    Passphrases.prefs['sound'] = sound.checked;
+    Passphrases.savePrefs();
+  });
+
+  // choosing a color style applies and saves it
+  colorStyle.addEventListener('change', function(){
+    Passphrases.prefs['theme'] = colorStyle.value;
+    applyColorStyle(Passphrases.prefs['theme']);
     Passphrases.savePrefs();
   });
 });

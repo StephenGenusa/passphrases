@@ -21,263 +21,271 @@
    SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-var $ = require('jquery');
+document.addEventListener('DOMContentLoaded', function(){
+  var input = el('.passphrase-to-memorize'),
+    test = el('.passphrase-test'),
+    progress = el('.hint-progress'),
+    note = el('.memorize-note');
 
-$(function(){
-  // initialize memorize
-  $('.memorize-input').show();
-  $('.memorize-go').hide();
+  // how long to rest between rounds, in seconds
+  var countdownValues = [60, 120, 300, 600, 1800, 3600];
 
-  // allow submitting the memorize input form by pressing enter
-  $('.memorize-input-form').submit(function(){
-    var passphrase = $('.passphrase-to-memorize').val();
-    if(passphrase != '') {
-      startMemorizing(passphrase);
-    } else {
-      // blank passphrases not allowed
-      $('.passphrase-to-memorize').addClass('typo');
-      setTimeout(function(){
-        $('.passphrase-to-memorize').removeClass('typo');
-      }, 100);
-      $('.passphrase-to-memorize').focus();
+  // The passphrase being memorized and the progress with it; null when
+  // nothing is being memorized. One session at a time: starting or cancelling
+  // stops everything the previous one had running.
+  var session = null;
+  var hintAnimation = null;      // the progress bar, while the hint is hidden
+  var countdownInterval = null;  // the rest timer
+  var waitingForSpace = false;   // rest is over, waiting for the space bar
+
+  // exactly one of the three stages shows while memorizing
+  function showStage(stage) {
+    ['active', 'waiting', 'ready'].forEach(function(name){
+      setVisible('.memorize-' + name, name == stage);
+    });
+  }
+
+  function stopHint() {
+    if(hintAnimation) {
+      hintAnimation.cancel();
+      hintAnimation = null;
+    }
+  }
+  function stopCountdown() {
+    if(countdownInterval !== null) {
+      clearInterval(countdownInterval);
+      countdownInterval = null;
+    }
+  }
+  function stopEverything() {
+    stopHint();
+    stopCountdown();
+    waitingForSpace = false;
+  }
+
+  function showHint() {
+    setVisible('.hint-progress-wrapper', false);
+    setVisible('.hint-show', true);
+  }
+
+  function updateStats() {
+    if(session.tries == 0) {
+      note.textContent = 'Type the passphrase';
+    } else if(session.tries == 1) {
+      note.textContent = 'Try to type the passphrase before the hint appears';
+    } else if(session.typedWithoutLooking && session.tries < 5) {
+      note.textContent = 'Good job! Try making it to 5 tries';
+    } else if(session.typedWithoutLooking && session.tries < 10) {
+      note.textContent = 'Try making it to 10 tries without seeing what you type';
+    } else if(session.typedWithoutLooking) {
+      note.textContent = 'Keep practicing';
+    }
+    el('.memorize-tries').textContent = session.tries;
+  }
+
+  function nextTry() {
+    // reset the hint
+    stopHint();
+    progress.style.width = '0%';
+    setVisible('.hint-progress-wrapper', true);
+    setVisible('.hint-show', false);
+
+    showStage('active');
+
+    // reset the passphrase
+    test.value = '';
+    test.classList.remove('typo');
+    test.focus();
+
+    // the first try shows the hint at once
+    if(session.delay == 0) {
+      showHint();
+      return;
     }
 
-    return false;
-  });
-  $('.button-start-memorizing').click(function(){
-    $('.memorize-input-form').submit();
-  });
-  $('.button-copy-passphrase').click(function(){
-    var passphrase = $('.passphrase').text();
-    Passphrases.tabMemorize();
-    Passphrases.memorizeStart(passphrase);
-  });
+    // animate the progress bar; when the delay is up, show the hint
+    var animation = progress.animate(
+      [{ width: '0%' }, { width: '100%' }],
+      { duration: session.delay * 1000, fill: 'forwards' });
+    animation.onfinish = function(){
+      if(hintAnimation === animation) {
+        hintAnimation = null;
+        showHint();
+      }
+    };
+    hintAnimation = animation;
+  }
 
+  function countdownComplete() {
+    stopCountdown();
+
+    // display ready and wait for the space bar
+    showStage('ready');
+    test.blur();
+    waitingForSpace = true;
+
+    note.textContent = 'Keep practicing';
+  }
+
+  function countdown() {
+    session.typedWithoutLooking = false;
+
+    showStage('waiting');
+    note.textContent = 'Give your mind a rest';
+
+    // how many seconds do we wait?
+    var totalSeconds = countdownValues[session.currentCountdown];
+
+    function updateCountdown() {
+      var seconds = totalSeconds % 60;
+      if(seconds < 10) seconds = '0' + seconds;
+      var minutes = Math.floor(totalSeconds / 60);
+      el('.countdown').textContent = minutes + ':' + seconds;
+    }
+    updateCountdown();
+
+    countdownInterval = setInterval(function(){
+      totalSeconds--;
+      if(totalSeconds > 0) {
+        updateCountdown();
+        return;
+      }
+
+      // countdown complete, the next rest is longer
+      if(session.currentCountdown < countdownValues.length - 1)
+        session.currentCountdown++;
+
+      // notification
+      Passphrases.playSound('notification');
+      Passphrases.notify('Time to keep practicing your passphrase!');
+
+      countdownComplete();
+    }, 1000);
+  }
 
   // start memorizing
   function startMemorizing(passphrase) {
+    stopEverything();
+    session = {
+      passphrase: passphrase,
+      delay: 0,                   // seconds before the hint appears
+      tries: 0,
+      typedWithoutLooking: false,
+      currentCountdown: 0
+    };
+
     // switch from input mode to go mode
-    $('.memorize-input').hide();
-    $('.memorize-go').show();
+    setVisible('.memorize-input', false);
+    setVisible('.memorize-go', true);
 
-    $('.memorize-active').show();
-    $('.memorize-waiting').hide();
-    $('.memorize-ready').hide();
+    test.type = 'text';
+    el('.hint-show').textContent = passphrase;
 
-    $('.passphrase-test').attr('type', 'text');
-
-    var delay = 0;
-    var tries = 0;
-    $('.hint-show').text(passphrase);
-
-    var typedWithoutLooking = false;
-
-    // countdown values are in seconds
-    var countdownValues = [60, 120, 300, 600, 1800, 3600];
-    var currentCountdown = 0;
-
-    function updateStats() {
-      if(tries == 0) {
-        $('.memorize-note').html('Type the passphrase');
-      } else if(tries == 1) {
-        $('.memorize-note').html('Try to type the passphrase before the hint appears');
-      } else if(typedWithoutLooking && tries < 5) {
-        $('.memorize-note').html('Good job! Try making it to 5 tries');
-      } else if(typedWithoutLooking && tries < 10) {
-        $('.memorize-note').html('Try making it to 10 tries without seeing what you type');
-      } else if(typedWithoutLooking) {
-        $('.memorize-note').html('Keep practicing');
-      }
-      $('.memorize-tries').html(tries);
-    }
     updateStats();
-
-    function nextTry() {
-      // reset the hint
-      $('.hint-progress').stop();
-      $('.hint-progress').css('width', '0%');
-      $('.hint-progress-wrapper').show();
-      $('.hint-show').hide();
-
-      // show active, hide waiting
-      $('.memorize-active').show();
-      $('.memorize-waiting').hide();
-      $('.memorize-ready').hide();
-
-      // reset the passphrase
-      $('.passphrase-test').val('').focus();
-
-      // animate the progress bar
-      $('.hint-progress').animate({ width: '100%' }, delay * 1000, function(){
-        // delay is up, show the hint
-        $('.hint-progress-wrapper').hide();
-        $('.hint-show').show();
-      });
-    }
-
-    function countdownComplete(countdownInterval) {
-      // stop the timer
-      clearInterval(countdownInterval);
-
-      // remove the click handler for skip button
-      $('.button-skip-countdown').unbind('click');
-
-      // display ready
-      $('.memorize-active').hide();
-      $('.memorize-waiting').hide();
-      $('.memorize-ready').show();
-
-      // wait for space presses
-      $('.passphrase-test').blur();
-      $(window).keypress(function(e) {
-        if (e.keyCode == 0 || e.keyCode == 32) {
-          $(window).unbind('keypress');
-          nextTry();
-          return false;
-        }
-      });
-
-      $('.memorize-note').html('Keep practicing');
-    }
-
-    function countdown() {
-      typedWithoutLooking = false;
-
-      // show waiting, hide active
-      $('.memorize-active').hide();
-      $('.memorize-waiting').show();
-      $('.memorize-ready').hide();
-      $('.memorize-note').html('Give your mind a rest');
-
-      // how many seconds do we wait?
-      var total_seconds = countdownValues[currentCountdown];
-
-      // update the countdown each second
-      function updateCountdown(){
-        var seconds = total_seconds % 60;
-        if(seconds < 10) seconds = '0' + seconds;
-        var minutes = Math.floor(total_seconds / 60);
-        $('.countdown').html(minutes + ':' + seconds);
-      }
-      updateCountdown();
-
-      var countdownInterval = setInterval(function(){
-        updateCountdown();
-
-        // decrease the seconds
-        total_seconds--;
-        if(total_seconds < 0) {
-          // countdown complete, move on to the next countdown
-          if(currentCountdown < countdownValues.length - 1)
-            currentCountdown++;
-
-          // notification
-          Passphrases.playSound('notification');
-          Passphrases.notify('Time to keep practicing your passphrase!');
-
-          countdownComplete(countdownInterval);
-        }
-      }, 1000);
-
-      // skip button
-      $('.button-skip-countdown').click(function(){
-        countdownComplete(countdownInterval);
-      });
-    }
-
-    // test for success
-    $('.passphrase-test').keyup(function(){
-      var passphraseTest = $(this).val();
-
-      // have we achieved success?
-      if(passphraseTest == passphrase) {
-        // success
-        tries++;
-
-        // play success sound effect
-        if(typedWithoutLooking) {
-          Passphrases.playSound('success');
-        }
-
-        // is the animation still happening?
-        if($('.hint-progress').is(':animated')) {
-          typedWithoutLooking = true;
-        }
-
-        // 2nd try has a 5 second delay
-        if(tries == 1) {
-          delay = 5;
-        } else {
-          // tries 2-6 have slowly longer delays
-          if(tries <= 6) {
-            delay++;
-          }
-        }
-
-        // increase delay, if needed
-        if(delay <= 10)
-          delay++;
-
-        // update stats
-        updateStats();
-
-        // after 5 tries, change from text field to password field
-        if(tries == 5) {
-          $('.passphrase-test').attr('type', 'password');
-        }
-
-        if(tries < 10) {
-          nextTry();
-        } else {
-          if(typedWithoutLooking) {
-            countdown();
-          } else {
-            nextTry();
-          }
-        }
-      }
-      // check for typo
-      else {
-        var match = true;
-
-        if(passphraseTest.length > passphrase.length) {
-          match = false;
-        } else {
-          // does it match the passphrase correctly so far?
-          for(var i = 0; i < passphraseTest.length; i++) {
-            if(passphraseTest[i] != passphrase[i]) {
-              match = false;
-              break;
-            }
-          }
-        }
-
-        if(match) {
-          $(this).removeClass('typo');
-        } else {
-          $(this).addClass('typo');
-        }
-      }
-    });
-
-    // start at zero seconds
     nextTry();
   }
 
-  $('.button-cancel').click(function(){
-    // switch from go mode to input mode
-    $('.memorize-input').show();
-    $('.memorize-go').hide();
-    $('.passphrase-to-memorize').focus();
+  // check what has been typed after each key
+  test.addEventListener('keyup', function(){
+    if(!session) return;
+    var typed = test.value;
 
-    // stop listening for space keypress
-    $(window).unbind('keypress');
+    if(typed == session.passphrase) {
+      // success
+      session.tries++;
+
+      // play success sound effect
+      if(session.typedWithoutLooking) {
+        Passphrases.playSound('success');
+      }
+
+      // was it typed before the hint appeared?
+      if(hintAnimation) {
+        session.typedWithoutLooking = true;
+      }
+
+      // 2nd try has a 5 second delay
+      if(session.tries == 1) {
+        session.delay = 5;
+      } else if(session.tries <= 6) {
+        // tries 2-6 have slowly longer delays
+        session.delay++;
+      }
+
+      // increase delay, if needed
+      if(session.delay <= 10)
+        session.delay++;
+
+      updateStats();
+
+      // after 5 tries, change from text field to password field
+      if(session.tries == 5) {
+        test.type = 'password';
+      }
+
+      // after 10 tries, rest once it has been typed without looking
+      if(session.tries >= 10 && session.typedWithoutLooking) {
+        countdown();
+      } else {
+        nextTry();
+      }
+    } else {
+      // a typo is anything that does not match the passphrase so far
+      test.classList.toggle('typo', session.passphrase.indexOf(typed) != 0);
+    }
+  });
+
+  // space starts the next round after a rest
+  window.addEventListener('keydown', function(e){
+    if(waitingForSpace && e.key == ' ') {
+      e.preventDefault();
+      waitingForSpace = false;
+      nextTry();
+    }
+  });
+
+  el('.button-skip-countdown').addEventListener('click', function(){
+    if(countdownInterval !== null) countdownComplete();
+  });
+
+  el('.button-cancel').addEventListener('click', function(){
+    stopEverything();
+    session = null;
+
+    // switch from go mode to input mode
+    setVisible('.memorize-input', true);
+    setVisible('.memorize-go', false);
+    input.focus();
+  });
+
+  // allow submitting the memorize input form by pressing enter
+  el('.memorize-input-form').addEventListener('submit', function(e){
+    e.preventDefault();
+    if(input.value != '') {
+      startMemorizing(input.value);
+    } else {
+      // blank passphrases not allowed
+      input.classList.add('typo');
+      setTimeout(function(){
+        input.classList.remove('typo');
+      }, 100);
+      input.focus();
+    }
+  });
+  el('.button-start-memorizing').addEventListener('click', function(){
+    el('.memorize-input-form').requestSubmit();
+  });
+  el('.button-copy-passphrase').addEventListener('click', function(){
+    if(Passphrases.currentPassphrase) Passphrases.memorizeStart(Passphrases.currentPassphrase);
   });
 
   // let the outside world start memorizing a passphrase
   Passphrases.memorizeStart = function(passphrase){
-    $('.passphrase-to-memorize').val(passphrase);
+    input.value = passphrase;
     startMemorizing(passphrase);
   };
 
+  // initialize memorize
+  setVisible('.memorize-input', true);
+  setVisible('.memorize-go', false);
 });
